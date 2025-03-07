@@ -1,0 +1,11 @@
+# dependencies
+node_modules/
+.npm
+.pnpm
+.pnp.cjs
+
+# misc
+.DS_Store
+
+dist/
+.vscode/

@@ -1,0 +1,20 @@
+{
+  "name": "one-pass",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev:flow": "pnpm --filter one-pass-flow run dev",
+    "dev:demo": "pnpm --filter demo run dev",
+    "build:flow": "pnpm --filter flow run dev build"
+  },
+  "keywords": [
+    "flow",
+    "workflow"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "one-pass-flow": "workspace:^"
+  }
+}

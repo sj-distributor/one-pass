@@ -1,0 +1,7 @@
+{
+    "extends": ["plugin:@sj-distributor/react/recommended"],
+    "ignorePatterns": ["dist"],
+    "rules": {
+      "@typescript-eslint/no-explicit-any": "off"
+  }
+  }
