@@ -1,7 +1,14 @@
-import { type Edge, type Node, useNodesState } from "@xyflow/react";
+import { useNodesState } from "@xyflow/react";
 import { ForwardedRef, useImperativeHandle, useState } from "react";
 
-import { IUseStoreProps, OnePassFlowRefType } from "./types";
+import {
+  Edge,
+  IUseStoreProps,
+  Node,
+  OnePassFlowNodeDataType,
+  OnePassFlowRefType,
+} from "./types";
+import { getTreeNodes } from "./utils";
 export const useStore = (
   props: IUseStoreProps,
   ref?: ForwardedRef<OnePassFlowRefType>,
@@ -10,10 +17,14 @@ export const useStore = (
 
   const [edges, setEdges] = useState<Edge[]>([]);
 
-  // const { getNodes } = useReactFlow();
-
-  // TODO: 更新数据
   const handleUpdate = (nodes: Node[], edges: Edge[]) => {
+    setNodes(nodes);
+    setEdges(edges);
+  };
+
+  const handleSetData = (data: OnePassFlowNodeDataType[]) => {
+    const { nodes, edges } = getTreeNodes(data);
+
     setNodes(nodes);
     setEdges(edges);
   };
@@ -21,6 +32,7 @@ export const useStore = (
   useImperativeHandle(ref, () => ({
     data: nodes,
     handleUpdate,
+    handleSetData,
   }));
 
   return {
