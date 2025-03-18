@@ -13,7 +13,7 @@ const inputFile = "./src/index.ts";
 // 公共基础配置
 const baseConfig = {
   input: inputFile,
-  external: ["react", "react-dom", "@xyflow/react", "ramda"],
+  external: ["react", "react-dom", "@xyflow/react", "ramda", "ahooks"],
   watch: {
     buildDelay: 500,
   },

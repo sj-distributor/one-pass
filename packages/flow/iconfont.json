@@ -1,0 +1,9 @@
+{
+  "symbol_url": "//at.alicdn.com/t/c/font_4779795_cui03lulny.js",
+  "use_typescript": true,
+  "save_dir": "./src/components/iconfonts",
+  "trim_icon_prefix": "icon",
+  "unit": "px",
+  "default_icon_size": 20,
+  "can_import_react": false
+}

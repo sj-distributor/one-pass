@@ -25,6 +25,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "ahooks": "^3.7.4",
     "ramda": "^0.29.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -34,6 +35,7 @@
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-typescript": "^12.1.2",
+    "@sj-distributor/react-iconfont-cli": "^2.4.0",
     "@types/d3-hierarchy": "^3.1.7",
     "@types/ramda": "^0.29.3",
     "@types/react": "^19.0.10",
