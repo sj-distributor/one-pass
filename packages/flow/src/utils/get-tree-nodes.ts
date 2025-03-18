@@ -1,3 +1,6 @@
+/**
+ * @description D3处理树状图，后续将调整为其他算法进行处理
+ */
 import { aperture, assocPath, equals, slice } from "ramda";
 
 import { Edge, Node, OnePassFlowNodeDataType } from "../types";
