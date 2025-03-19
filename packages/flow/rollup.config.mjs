@@ -13,22 +13,14 @@ const inputFile = "./src/index.ts";
 // 公共基础配置
 const baseConfig = {
   input: inputFile,
-  external: ["react", "react-dom", "@xyflow/react"],
+  external: ["react", "react-dom", "@xyflow/react", "ramda", "ahooks"],
   watch: {
     buildDelay: 500,
   },
 };
 
 // 公共插件配置
-const sharedPlugins = [
-  resolve(),
-  commonjs(),
-  postcss({
-    // 可在此统一配置 PostCSS 插件
-    minimize: true,
-    extract: true, // 提取 CSS 到独立文件
-  }),
-];
+const sharedPlugins = [resolve(), commonjs(), postcss()];
 
 // 生成 TS 插件配置的工厂函数
 const typescriptConfig = typescript({

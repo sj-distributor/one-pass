@@ -1,0 +1,61 @@
+[
+  {
+    "id": "1b5c333e-03c7-429e-899c-1dcda0f6d14f",
+    "parentId": "0",
+    "parentIds": ["0"],
+    "name": "申請人",
+    "description": "SJ Food",
+    "icon": null,
+    "type": "InitiatorNode",
+    "handler": null,
+    "expressionInit": null,
+    "setting": {
+      "scopes": {
+        "organizations": {
+          "5e2d8554-cdc7-4d7f-95e4-20ce9b62ee92": "SJ Food"
+        }
+      }
+    },
+    "formSetting": {
+      "fields_permission": {
+        "applyList": 1,
+        "applyType": 3,
+        "remedyType": 1
+      }
+    },
+    "sortNumber": 1
+  },
+  {
+    "id": "6ad57dad-c3a9-474a-adf4-f3b8d2be7966",
+    "parentId": "1b5c333e-03c7-429e-899c-1dcda0f6d14f",
+    "parentIds": ["1b5c333e-03c7-429e-899c-1dcda0f6d14f"],
+    "name": "審批人",
+    "description": "许嘉泳(NICO.X)(WXF000455)",
+    "icon": null,
+    "type": "ApproverNode",
+    "handler": null,
+    "expressionInit": null,
+    "setting": {
+      "approvers": ["06c670df-48de-4579-b756-3ccbe6f0eb7c"],
+      "approverType": 1
+    },
+    "formSetting": null,
+    "sortNumber": 1
+  },
+  {
+    "id": "82dde0af-f5e2-44ee-9160-f055b702a612",
+    "parentId": "6ad57dad-c3a9-474a-adf4-f3b8d2be7966",
+    "parentIds": ["6ad57dad-c3a9-474a-adf4-f3b8d2be7966"],
+    "name": "抄送人",
+    "description": "许嘉泳(NICO.X)(WXF000455)",
+    "icon": null,
+    "type": "CcRecipientNode",
+    "handler": null,
+    "expressionInit": null,
+    "setting": {
+      "approvers": ["06c670df-48de-4579-b756-3ccbe6f0eb7c"]
+    },
+    "formSetting": null,
+    "sortNumber": 1
+  }
+]

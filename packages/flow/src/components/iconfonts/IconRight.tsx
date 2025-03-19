@@ -1,0 +1,30 @@
+/* tslint:disable */
+/* eslint-disable */
+
+import { CSSProperties, SVGAttributes, FunctionComponent } from 'react';
+import { getIconColor } from './helper';
+import React from 'react';
+
+interface Props extends Omit<SVGAttributes<SVGElement>, 'color'> {
+  size?: number;
+  color?: string | string[];
+}
+
+const DEFAULT_STYLE: CSSProperties = {
+  display: 'block',
+};
+
+const IconRight: FunctionComponent<Props> = ({ size = 20, color, style: _style, ...rest }) => {
+  const style = _style ? { ...DEFAULT_STYLE, ..._style } : DEFAULT_STYLE;
+
+  return (
+    <svg viewBox="0 0 1024 1024" width={size + 'px'} height={size + 'px'} style={style} {...rest}>
+      <path
+        d="M399.232 756.736a38.485 38.485 0 0 1 0-54.443l190.507-190.506-190.507-190.55a38.485 38.485 0 0 1 54.4-54.442l217.77 217.77a38.485 38.485 0 0 1 0 54.4l-217.77 217.771a38.485 38.485 0 0 1-54.4 0z"
+        fill={getIconColor(color, 0, '#333333')}
+      />
+    </svg>
+  );
+};
+
+export default IconRight;

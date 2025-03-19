@@ -1,0 +1,106 @@
+.one-pass-card-error {
+  border: 1px solid #f44f4f;
+  box-shadow: 0 2px 1px 0;
+}
+
+.one-pass-card-warning {
+  border: 1px solid #ef9d36;
+  box-shadow: 0 2px 1px 0;
+}
+
+.one-pass-card-default {
+  width: 200px;
+  pointer-events: all;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.one-pass-card-title {
+  padding: 0px 16px;
+  min-height: 28px;
+  text-align: left;
+  border: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px 8px 0 0;
+  background-color: #342a5e;
+}
+
+.one-pass-card-button {
+  display: none;
+  pointer-events: all;
+}
+
+.one-pass-card-title:hover {
+  .one-pass-card-button {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+.one-pass-card-content {
+  width: 100%;
+  padding: 16px;
+  text-align: left;
+  color: #342a5e;
+  border: 1px solid #eff0f3;
+  font-size: 14px;
+  background-color: #fff;
+  word-break: break-all;
+  word-wrap: break-word;
+  border-radius: 0 0 8px 8px;
+  border-top: none;
+  box-shadow: 0 2px 1px 0 #eff0f3;
+  pointer-events: all;
+}
+
+.one-pass-card-target-handle {
+  opacity: 0;
+  margin-bottom: -4px;
+}
+
+.one-pass-card-source-handle {
+  opacity: 0;
+  margin-top: -4px;
+}
+
+.one-pass-card-placeholder {
+  font-size: 14px;
+  color: #9696a7;
+}
+
+.one-pass-card-empty-content {
+  padding: 28px 16px;
+}
+
+.one-pass-card-initiator .one-pass-card-title {
+  background-color: #605dec;
+}
+
+.one-pass-card-approver .one-pass-card-title {
+  background-color: #ef9d36;
+}
+
+.one-pass-card-condition .one-pass-card-title {
+  background-color: #34a46e;
+}
+
+.one-pass-card-cc-recipient .one-pass-card-title {
+  background-color: #b54cf6;
+}
+
+.one-pass-flow-end {
+  width: 200px;
+  height: 40px;
+  box-shadow: 0 2px 1px 0 #eff0f3;
+  pointer-events: all;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #eff0f3;
+  border-radius: 8px;
+  border: 1px solid #eff0f3;
+  color: #323249;
+}
