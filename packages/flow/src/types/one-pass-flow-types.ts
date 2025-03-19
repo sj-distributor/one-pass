@@ -1,8 +1,11 @@
 import {
   Edge as XyflowEdge,
   Node as XyflowNode,
+  NodeProps as XyflowNodeProps,
+  NodeTypes as XyflowNodeTypes,
   ReactFlowProps,
 } from "@xyflow/react";
+import { ComponentType } from "react";
 
 export type OnePassFlowNodeDataType = {
   name?: string;
@@ -35,6 +38,18 @@ export type OnePassFlowEdgeDataType = {
 export type Edge<T extends Record<string, unknown> = Record<string, unknown>> =
   XyflowEdge<OnePassFlowEdgeDataType & T>;
 
+export type NodeComponentType = XyflowNodeProps<Node> & {
+  type: any;
+};
+
+export type NodeTypes = XyflowNodeTypes & {
+  InitiatorNode: ComponentType<NodeComponentType>;
+  ConditionNode: ComponentType<NodeComponentType>;
+  ApproverNode: ComponentType<NodeComponentType>;
+  CcRecipientNode: ComponentType<NodeComponentType>;
+  EndNode: ComponentType<NodeComponentType>;
+};
+
 // TODO: 后续会按实际情况进行调整
 export type OnePassFlowRefType = {
   data: any[];
@@ -43,6 +58,7 @@ export type OnePassFlowRefType = {
 };
 
 export interface IOnePassFlowProps extends Omit<ReactFlowProps, "height"> {
+  nodeTypes: NodeTypes;
   flowRef?: React.RefObject<OnePassFlowRefType>;
 }
 

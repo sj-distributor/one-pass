@@ -90,3 +90,17 @@
 .one-pass-card-cc-recipient .one-pass-card-title {
   background-color: #b54cf6;
 }
+
+.one-pass-flow-end {
+  width: 200px;
+  height: 40px;
+  box-shadow: 0 2px 1px 0 #eff0f3;
+  pointer-events: all;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #eff0f3;
+  border-radius: 8px;
+  border: 1px solid #eff0f3;
+  color: #323249;
+}

@@ -8,7 +8,7 @@ const getEdgeType = (data?: OnePassFlowEdgeDataType) => {
   switch (data?.target?.type) {
     case "ConditionNode":
       return "ConditionEdge";
-    case "End":
+    case "EndNode":
       return "EndEdge";
     default:
       return "AddEdge";

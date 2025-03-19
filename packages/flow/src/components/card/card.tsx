@@ -1,13 +1,12 @@
 import "./card.css";
 
-import { Handle, NodeProps, Position } from "@xyflow/react";
+import { Handle, Position } from "@xyflow/react";
 import { useBoolean } from "ahooks";
 import React from "react";
 
-import type { ICardProps } from "../../types/card-types";
-import type { Node } from "../../types/one-pass-flow-types";
+import type { CardType } from "../../types/card-types";
 import IconFont from "../iconfonts";
-export const Card = React.memo((props: ICardProps) => {
+export const Card = (props: CardType) => {
   const {
     data,
     hiddenDescription,
@@ -101,33 +100,7 @@ export const Card = React.memo((props: ICardProps) => {
         position={Position.Bottom}
         isConnectable={false}
       />
-      {open && renderForm && renderForm()}
+      {open && renderForm && renderForm({ data, handleOpen: setOpen.set })}
     </>
   );
-});
-
-export const DEFAULT_NODES_TYPES = {
-  InitiatorNode: (rest: NodeProps<Node>) => (
-    <Card
-      {...rest}
-      hiddenDescription
-      targetPosition={undefined}
-      className="one-pass-card-initiator"
-    />
-  ),
-  ApproverNode: (rest: NodeProps<Node>) => (
-    <Card {...rest} className="one-pass-card-approver" allowDelete />
-  ),
-  CcRecipientNode: (rest: NodeProps<Node>) => (
-    <Card {...rest} className="one-pass-card-cc-recipient" allowDelete />
-  ),
-  ConditionNode: (rest: NodeProps<Node>) => (
-    <Card
-      {...rest}
-      className="one-pass-card-condition"
-      // allowCopy={!(rest.data.setting as ConditionDateSettingType)?.isDefault}
-      // allowDelete={!(rest.data.setting as ConditionDateSettingType)?.isDefault}
-    />
-  ),
-  // End,
 };

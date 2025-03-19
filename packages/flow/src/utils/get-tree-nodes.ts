@@ -17,10 +17,10 @@ export const getTreeNodes = (
 
   const resultEdges: Edge[] = [];
 
-  const EndNode = buildNode("End", {
+  const EndNode = buildNode("EndNode", {
     id: "End",
     parentId: "End",
-    type: "End",
+    type: "EndNode",
   });
 
   // 所有根节点+结束节点
