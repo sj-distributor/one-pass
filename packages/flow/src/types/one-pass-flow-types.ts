@@ -1,5 +1,6 @@
 import {
   Edge as XyflowEdge,
+  EdgeProps as XyflowEdgeProps,
   Node as XyflowNode,
   NodeProps as XyflowNodeProps,
   NodeTypes as XyflowNodeTypes,
@@ -39,6 +40,10 @@ export type Edge<T extends Record<string, unknown> = Record<string, unknown>> =
   XyflowEdge<OnePassFlowEdgeDataType & T>;
 
 export type NodeComponentType = XyflowNodeProps<Node> & {
+  type: any;
+};
+
+export type EdgeComponentType = XyflowEdgeProps & {
   type: any;
 };
 
