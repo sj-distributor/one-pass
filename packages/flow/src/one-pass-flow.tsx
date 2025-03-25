@@ -27,7 +27,9 @@ export const ONE_PASS_FLOW_DEFAULT_NODE_TYPES = {
 
 export const ONE_PASS_FLOW_DEFAULT_EDGE_TYPES = {
   AddEdge: (rest: EdgeComponentType) => <AddEdge edge={rest} />,
-  ConditionEdge: (rest: EdgeComponentType) => <AddEdge edge={rest} />,
+  ConditionEdge: (rest: EdgeComponentType) => (
+    <AddEdge edge={rest} isCondition />
+  ),
   EndEdge: (rest: EdgeComponentType) => <AddEdge edge={rest} />,
 };
 
@@ -35,7 +37,7 @@ export const Flow = React.forwardRef(
   (props: IOnePassFlowProps, ref?: ForwardedRef<OnePassFlowRefType>) => {
     const { nodes, edges } = useStore(props, ref);
 
-    const { nodeTypes } = props;
+    const { nodeTypes, edgeTypes } = props;
 
     return (
       <ReactFlow
@@ -45,7 +47,7 @@ export const Flow = React.forwardRef(
         edgeTypes={ONE_PASS_FLOW_DEFAULT_EDGE_TYPES}
       />
     );
-  },
+  }
 );
 
 export const OnePassFlow = (props: IOnePassFlowProps) => (

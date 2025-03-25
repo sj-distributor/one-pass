@@ -7,5 +7,6 @@ export * from "./components/initiator/initiator";
 export * from "./components/recipent/recipent";
 export * from "./one-pass-flow";
 // export { ONE_PASS_FLOW_DEFAULT_NODE_TYPES } from "./one-pass-flow";
+export * from "./components/add-edge/add-edge";
 export * from "./types";
 export * from "./utils";

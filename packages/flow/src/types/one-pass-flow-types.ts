@@ -1,6 +1,7 @@
 import {
   Edge as XyflowEdge,
   EdgeProps as XyflowEdgeProps,
+  EdgeTypes as XyflowEdgeTypes,
   Node as XyflowNode,
   NodeProps as XyflowNodeProps,
   NodeTypes as XyflowNodeTypes,
@@ -53,6 +54,10 @@ export type NodeTypes = XyflowNodeTypes & {
   ApproverNode: ComponentType<NodeComponentType>;
   CcRecipientNode: ComponentType<NodeComponentType>;
   EndNode: ComponentType<NodeComponentType>;
+};
+
+export type EdgeTypes = XyflowEdgeTypes & {
+  AddEdge: ComponentType<EdgeComponentType>;
 };
 
 // TODO: 后续会按实际情况进行调整

@@ -1,9 +1,14 @@
 import { getSmoothStepPath } from "@xyflow/react";
+import { useState } from "react";
 
 import { IAddEdgeProps } from "../../types/add-edge";
 
 export const useStore = (props: IAddEdgeProps) => {
-  const { edge } = props;
+  const { edge, isCondition } = props;
+
+  const [type, setType] = useState<string>("");
+
+  const [formOpen, setFormOpen] = useState<boolean>(false);
 
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     ...edge,
@@ -11,9 +16,23 @@ export const useStore = (props: IAddEdgeProps) => {
     borderRadius: 16,
   });
 
-  const translateX = labelX;
+  const open = props.open ?? formOpen;
 
-  const translateY = labelY;
+  const handleOpenChange = props.onOpenChange ?? setFormOpen;
 
-  return { edgePath, labelX, labelY, translateX, translateY };
+  const translateX = isCondition ? edge.sourceX : labelX;
+
+  const translateY = isCondition ? edge.sourceY + 20 : labelY;
+
+  return {
+    open,
+    edgePath,
+    labelX,
+    labelY,
+    translateX,
+    translateY,
+    type,
+    setType,
+    handleOpenChange,
+  };
 };
