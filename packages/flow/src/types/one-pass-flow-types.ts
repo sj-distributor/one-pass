@@ -58,6 +58,8 @@ export type NodeTypes = XyflowNodeTypes & {
 
 export type EdgeTypes = XyflowEdgeTypes & {
   AddEdge: ComponentType<EdgeComponentType>;
+  ConditionEdge: ComponentType<EdgeComponentType>;
+  EndEdge: ComponentType<EdgeComponentType>;
 };
 
 // TODO: 后续会按实际情况进行调整
@@ -69,6 +71,7 @@ export type OnePassFlowRefType = {
 
 export interface IOnePassFlowProps extends Omit<ReactFlowProps, "height"> {
   nodeTypes: NodeTypes;
+  edgeTypes: EdgeTypes;
   flowRef?: React.RefObject<OnePassFlowRefType>;
 }
 

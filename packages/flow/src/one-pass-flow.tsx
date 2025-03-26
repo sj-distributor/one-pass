@@ -1,6 +1,7 @@
 import "@xyflow/react/dist/style.css";
 
 import { ReactFlow, ReactFlowProvider } from "@xyflow/react";
+import { omit } from "ramda";
 import React, { ForwardedRef } from "react";
 
 import { Approver } from "./components/approver/approver";
@@ -44,16 +45,8 @@ export const Flow = React.forwardRef(
   (props: IOnePassFlowProps, ref?: ForwardedRef<OnePassFlowRefType>) => {
     const { nodes, edges } = useStore(props, ref);
 
-    const { nodeTypes, edgeTypes } = props;
-
     return (
-      <ReactFlow
-        {...props}
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-      />
+      <ReactFlow {...omit(["flowRef"], props)} nodes={nodes} edges={edges} />
     );
   },
 );
