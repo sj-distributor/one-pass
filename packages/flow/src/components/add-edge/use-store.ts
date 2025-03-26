@@ -4,7 +4,7 @@ import { useState } from "react";
 import { IAddEdgeProps } from "../../types/add-edge";
 
 export const useStore = (props: IAddEdgeProps) => {
-  const { edge, isCondition } = props;
+  const { edge, isCondition, isEnd, addButtonPosition } = props;
 
   const [type, setType] = useState<string>("");
 
@@ -12,7 +12,7 @@ export const useStore = (props: IAddEdgeProps) => {
 
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     ...edge,
-    // centerY: isEnd ? edge.targetY - 40 : undefined,
+    centerY: isEnd ? edge.targetY - 40 : undefined,
     borderRadius: 16,
   });
 
@@ -20,9 +20,14 @@ export const useStore = (props: IAddEdgeProps) => {
 
   const handleOpenChange = props.onOpenChange ?? setFormOpen;
 
-  const translateX = isCondition ? edge.sourceX : labelX;
+  const translateX =
+    ((addButtonPosition && addButtonPosition(edge).x) ?? (isEnd || isCondition))
+      ? edge.sourceX
+      : labelX;
 
-  const translateY = isCondition ? edge.sourceY + 20 : labelY;
+  const translateY =
+    (addButtonPosition && addButtonPosition(edge).y) ??
+    (isCondition ? edge.sourceY + 20 : isEnd ? labelY - 25 : labelY);
 
   return {
     open,

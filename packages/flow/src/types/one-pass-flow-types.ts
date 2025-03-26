@@ -44,7 +44,7 @@ export type NodeComponentType = XyflowNodeProps<Node> & {
   type: any;
 };
 
-export type EdgeComponentType = XyflowEdgeProps & {
+export type EdgeComponentType = XyflowEdgeProps<Edge> & {
   type: any;
 };
 

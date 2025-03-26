@@ -13,6 +13,8 @@ export const Card = (props: CardType) => {
     allowCopy,
     allowDelete,
     className,
+    onCopy,
+    onDelete,
     renderForm,
   } = props;
 
@@ -64,7 +66,7 @@ export const Card = (props: CardType) => {
             {allowCopy && (
               <IconFont
                 name="a-_duplicate_5"
-                // onClick={() => onCopy && onCopy(props)}
+                onClick={() => onCopy && onCopy(props)}
               />
             )}
             {allowDelete && (
@@ -72,7 +74,7 @@ export const Card = (props: CardType) => {
                 className="cursor-pointer ml-4"
                 name="close"
                 color={"#fff"}
-                // onClick={() => onDelete && onDelete(props)}
+                onClick={() => onDelete && onDelete(props)}
               />
             )}
           </div>

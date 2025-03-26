@@ -6,9 +6,17 @@ export interface IAddEdgeProps {
   edge: EdgeComponentType;
   open?: boolean;
   isCondition?: boolean;
-  addButtonPosition?: { x: number; y: number };
+  isEnd?: boolean;
+  addButtonPosition?: (edge: EdgeComponentType) => { x: number; y: number };
   onOpenChange?: (open?: boolean) => void;
-  renderEdgeLabel?: (edge: EdgeComponentType) => ReactNode;
+  renderEdgeLabel?: (
+    edge: EdgeComponentType,
+    addButtonNode: (
+      translateX: number,
+      translateY: number,
+      filter?: string[],
+    ) => ReactNode,
+  ) => ReactNode;
   renderForm?: (
     type: "ConditionNode" | "ApproverNode" | "CcRecipientNode" | string,
     edgeData: EdgeComponentType["data"],

@@ -3,14 +3,12 @@ import "@xyflow/react/dist/style.css";
 import { ReactFlow, ReactFlowProvider } from "@xyflow/react";
 import React, { ForwardedRef } from "react";
 
-import { AddEdge } from "./components/add-edge/add-edge";
 import { Approver } from "./components/approver/approver";
 import { Condition } from "./components/condition/condition";
 import { End } from "./components/end/end";
 import { Initiator } from "./components/initiator/initiator";
 import { Recipient } from "./components/recipent/recipent";
 import {
-  EdgeComponentType,
   IOnePassFlowProps,
   NodeComponentType,
   OnePassFlowRefType,
@@ -25,13 +23,22 @@ export const ONE_PASS_FLOW_DEFAULT_NODE_TYPES = {
   EndNode: (props: NodeComponentType) => <End {...props} />,
 };
 
-export const ONE_PASS_FLOW_DEFAULT_EDGE_TYPES = {
-  AddEdge: (rest: EdgeComponentType) => <AddEdge edge={rest} />,
-  ConditionEdge: (rest: EdgeComponentType) => (
-    <AddEdge edge={rest} isCondition />
-  ),
-  EndEdge: (rest: EdgeComponentType) => <AddEdge edge={rest} />,
-};
+// TODO: 暂无引擎设计无法支撑增删改
+// export const ONE_PASS_FLOW_DEFAULT_EDGE_TYPES = {
+//   AddEdge: (rest: EdgeComponentType) => <AddEdge edge={rest} />,
+//   ConditionEdge: (rest: EdgeComponentType) => (
+//     <AddEdge edge={rest} isCondition />
+//   ),
+//   EndEdge: (rest: EdgeComponentType) => (
+//     <AddEdge
+//       edge={rest}
+//       isEnd
+//       renderEdgeLabel={(edge, addButton) =>
+//         addButton(edge.targetX, edge.targetY - 20, ["ConditionNode"])
+//       }
+//     />
+//   ),
+// };
 
 export const Flow = React.forwardRef(
   (props: IOnePassFlowProps, ref?: ForwardedRef<OnePassFlowRefType>) => {
@@ -41,13 +48,14 @@ export const Flow = React.forwardRef(
 
     return (
       <ReactFlow
+        {...props}
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
-        edgeTypes={ONE_PASS_FLOW_DEFAULT_EDGE_TYPES}
+        edgeTypes={edgeTypes}
       />
     );
-  }
+  },
 );
 
 export const OnePassFlow = (props: IOnePassFlowProps) => (

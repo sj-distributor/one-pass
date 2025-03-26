@@ -12,5 +12,7 @@ export type CardType = NodeComponentType & {
   allowDelete?: boolean;
   className?: string;
   hiddenDescription?: boolean;
+  onCopy?: (card: CardType) => void;
+  onDelete?: (card: CardType) => void;
   renderForm?: (props: IRenderFormProps) => ReactNode;
 };

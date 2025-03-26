@@ -7,13 +7,14 @@ import { IAddEdgeProps } from "../../types/add-edge";
 import IconFont from "../iconfonts";
 import { useStore } from "./use-store";
 export const AddEdge = (props: IAddEdgeProps) => {
-  const { edge, renderEdgeLabel, renderForm } = props;
+  const { edge, isCondition, renderEdgeLabel, renderForm } = props;
 
   const { data } = edge;
 
   const {
     open,
     edgePath,
+    labelY,
     translateX,
     translateY,
     type,
@@ -40,8 +41,11 @@ export const AddEdge = (props: IAddEdgeProps) => {
     },
   ];
 
-  const renderAddButton = () => (
-    // multiple?: boolean
+  const renderAddButton = (
+    translateX: number,
+    translateY: number,
+    filter?: string[],
+  ) => (
     <div
       className="one-pass-add-edge-button nodrag"
       style={{
@@ -52,20 +56,21 @@ export const AddEdge = (props: IAddEdgeProps) => {
       <div className="one-pass-add-edge-button-inner">
         <div className="one-pass-add-edge-button-popover">
           <div className="one-pass-add-edge-button-popover-content">
-            {options.map((item) => (
-              <div
-                key={item.type}
-                className="one-pass-add-edge-button-popover-item"
-                onClick={() => {
-                  // setMultiple.set(!!multiple);
-                  handleOpenChange(true);
-                  setType(item.type);
-                }}
-              >
-                {item.icon}
-                <span>{item.title}</span>
-              </div>
-            ))}
+            {options
+              .filter((item) => !filter?.includes(item.type))
+              .map((item) => (
+                <div
+                  key={item.type}
+                  className="one-pass-add-edge-button-popover-item"
+                  onClick={() => {
+                    handleOpenChange(true);
+                    setType(item.type);
+                  }}
+                >
+                  {item.icon}
+                  <span>{item.title}</span>
+                </div>
+              ))}
           </div>
         </div>
       </div>
@@ -81,29 +86,27 @@ export const AddEdge = (props: IAddEdgeProps) => {
         style={edge.style}
       />
       <EdgeLabelRenderer>
-        {renderAddButton()}
-        {/* {isCondition &&
-          !!(data?.target?.data.setting as ConditionDateSettingType)
-            ?.isDefault && (
-            <div
-              className={styles.conditionButton}
-              style={{
-                transform: `translate(-50%, -50%) translate(${edge.sourceX}px,${labelY}px)`,
-              }}
-              onClick={() => setModalType("ConditionNode")}
-            >
-              {t("workflowApprovalFlow.addCondition")}
-            </div>
-          )} */}
-
+        {renderAddButton(translateX, translateY)}
+        {isCondition && !renderEdgeLabel && (
+          <div
+            className="one-pass-add-edge-condition-button"
+            style={{
+              transform: `translate(-50%, -50%) translate(${edge.sourceX}px,${labelY}px)`,
+            }}
+            onClick={() => {
+              setType("ConditionNode");
+              handleOpenChange(true);
+            }}
+          >
+            添加條件
+          </div>
+        )}
         <div className="one-pass-flow-add-edge-form">
           {open &&
             renderForm &&
             renderForm(type, data, () => handleOpenChange(false))}
         </div>
-        {renderEdgeLabel && renderEdgeLabel(edge)}
-        {/* {isMultipleEnd &&
-          renderAddButton(edge.targetX, edge.targetY - 20, true)} */}
+        {renderEdgeLabel && renderEdgeLabel(edge, renderAddButton)}
       </EdgeLabelRenderer>
     </>
   );

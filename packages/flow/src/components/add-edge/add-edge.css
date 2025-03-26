@@ -57,3 +57,17 @@
   position: relative;
   pointer-events: all;
 }
+
+.one-pass-add-edge-condition-button {
+  position: absolute;
+  cursor: pointer;
+  background-color: #fff;
+  border-color: #eff0f3;
+  color: #605dec;
+  font-size: 14px;
+  padding: 8px 24px;
+  border-radius: 8px;
+  box-shadow: 0px 1px 8px 0px #eff0f3;
+  pointer-events: all;
+  z-index: 1;
+}
