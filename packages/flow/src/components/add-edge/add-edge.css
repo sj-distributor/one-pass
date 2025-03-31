@@ -1,0 +1,73 @@
+.one-pass-add-edge-button {
+  position: absolute;
+  background-color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  pointer-events: all;
+  z-index: 100;
+  border-radius: 50%;
+  display: flex;
+  cursor: pointer;
+}
+
+.one-pass-add-edge-add-button-inner {
+  position: relative;
+  background-color: #342a5e;
+  width: 20px;
+  height: 20px;
+}
+
+.one-pass-add-edge-button-popover {
+  position: absolute;
+  transform: translate(0%, -30%);
+  display: none;
+  padding: 8px 18px;
+}
+
+.one-pass-add-edge-button-popover-content {
+  display: flex;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0px 1px 8px 0px rgba(24, 40, 60, 0.1);
+}
+
+.one-pass-add-edge-button-popover:hover,
+.one-pass-add-edge-add-button-inner:hover .one-pass-add-edge-button-popover,
+.one-pass-add-edge-button:hover .one-pass-add-edge-button-popover {
+  display: flex;
+}
+
+.one-pass-add-edge-button-popover-item {
+  display: flex;
+  flex-direction: column;
+  width: 44px;
+  justify-content: center;
+  align-items: center;
+  margin-right: 24px;
+  cursor: pointer;
+  color: #342a5e;
+  &:last-of-type {
+    margin-right: 0;
+  }
+}
+
+.one-pass-flow-add-edge-form {
+  z-index: 1000;
+  position: relative;
+  pointer-events: all;
+}
+
+.one-pass-add-edge-condition-button {
+  position: absolute;
+  cursor: pointer;
+  background-color: #fff;
+  border-color: #eff0f3;
+  color: #605dec;
+  font-size: 14px;
+  padding: 8px 24px;
+  border-radius: 8px;
+  box-shadow: 0px 1px 8px 0px #eff0f3;
+  pointer-events: all;
+  z-index: 1;
+}

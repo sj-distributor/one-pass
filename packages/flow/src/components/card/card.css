@@ -40,6 +40,11 @@
   }
 }
 
+.one-pass-card-button svg {
+  cursor: pointer;
+  pointer-events: all;
+}
+
 .one-pass-card-content {
   width: 100%;
   padding: 16px;

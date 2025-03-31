@@ -1,6 +1,7 @@
 import "@xyflow/react/dist/style.css";
 
 import { ReactFlow, ReactFlowProvider } from "@xyflow/react";
+import { omit } from "ramda";
 import React, { ForwardedRef } from "react";
 
 import { Approver } from "./components/approver/approver";
@@ -23,13 +24,30 @@ export const ONE_PASS_FLOW_DEFAULT_NODE_TYPES = {
   EndNode: (props: NodeComponentType) => <End {...props} />,
 };
 
+// TODO: 暂无引擎设计无法支撑增删改
+// export const ONE_PASS_FLOW_DEFAULT_EDGE_TYPES = {
+//   AddEdge: (rest: EdgeComponentType) => <AddEdge edge={rest} />,
+//   ConditionEdge: (rest: EdgeComponentType) => (
+//     <AddEdge edge={rest} isCondition />
+//   ),
+//   EndEdge: (rest: EdgeComponentType) => (
+//     <AddEdge
+//       edge={rest}
+//       isEnd
+//       renderEdgeLabel={(edge, addButton) =>
+//         addButton(edge.targetX, edge.targetY - 20, ["ConditionNode"])
+//       }
+//     />
+//   ),
+// };
+
 export const Flow = React.forwardRef(
   (props: IOnePassFlowProps, ref?: ForwardedRef<OnePassFlowRefType>) => {
     const { nodes, edges } = useStore(props, ref);
 
-    const { nodeTypes } = props;
-
-    return <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} />;
+    return (
+      <ReactFlow {...omit(["flowRef"], props)} nodes={nodes} edges={edges} />
+    );
   },
 );
 

@@ -1,5 +1,7 @@
 import {
   Edge as XyflowEdge,
+  EdgeProps as XyflowEdgeProps,
+  EdgeTypes as XyflowEdgeTypes,
   Node as XyflowNode,
   NodeProps as XyflowNodeProps,
   NodeTypes as XyflowNodeTypes,
@@ -42,12 +44,22 @@ export type NodeComponentType = XyflowNodeProps<Node> & {
   type: any;
 };
 
+export type EdgeComponentType = XyflowEdgeProps<Edge> & {
+  type: any;
+};
+
 export type NodeTypes = XyflowNodeTypes & {
   InitiatorNode: ComponentType<NodeComponentType>;
   ConditionNode: ComponentType<NodeComponentType>;
   ApproverNode: ComponentType<NodeComponentType>;
   CcRecipientNode: ComponentType<NodeComponentType>;
   EndNode: ComponentType<NodeComponentType>;
+};
+
+export type EdgeTypes = XyflowEdgeTypes & {
+  AddEdge: ComponentType<EdgeComponentType>;
+  ConditionEdge: ComponentType<EdgeComponentType>;
+  EndEdge: ComponentType<EdgeComponentType>;
 };
 
 // TODO: 后续会按实际情况进行调整
@@ -59,6 +71,7 @@ export type OnePassFlowRefType = {
 
 export interface IOnePassFlowProps extends Omit<ReactFlowProps, "height"> {
   nodeTypes: NodeTypes;
+  edgeTypes: EdgeTypes;
   flowRef?: React.RefObject<OnePassFlowRefType>;
 }
 
