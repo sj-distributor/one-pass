@@ -19,14 +19,14 @@ const baseConfig = {
   },
 };
 
-// 公共插件配置
-const sharedPlugins = [resolve(), commonjs(), postcss()];
-
 // 生成 TS 插件配置的工厂函数
 const typescriptConfig = typescript({
   declaration: false,
   declarationDir: undefined,
 });
+
+// 公共插件配置
+const sharedPlugins = [typescriptConfig, resolve(), commonjs(), postcss()];
 
 // CJS 配置
 const cjsConfig = {
@@ -36,10 +36,7 @@ const cjsConfig = {
     format: "cjs",
     sourcemap: true,
   },
-  plugins: [
-    ...sharedPlugins,
-    typescriptConfig, // 声明文件目录
-  ],
+  plugins: sharedPlugins,
 };
 
 // ESM 配置
@@ -50,20 +47,17 @@ const esmConfig = {
     format: "esm",
     sourcemap: true,
   },
-  plugins: [
-    ...sharedPlugins,
-    typescriptConfig, // 声明文件目录
-  ],
+  plugins: sharedPlugins,
 };
 
 // 独立类型构建配置
 const dtsConfig = {
-  input: inputFile,
+  ...baseConfig,
   output: {
     file: "dist/index.d.ts", // 统一类型入口
     format: "esm",
   },
-  plugins: [dts()],
+  plugins: [dts(), resolve(), postcss()],
 };
 
 export default [cjsConfig, esmConfig, dtsConfig];
