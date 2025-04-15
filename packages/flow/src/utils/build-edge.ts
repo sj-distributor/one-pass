@@ -1,6 +1,10 @@
 import { MarkerType } from "@xyflow/react";
 
-import { Edge, OnePassFlowEdgeDataType } from "../types";
+import {
+  Edge,
+  OnePassFlowEdgeDataType,
+  OnTransformEdgeType,
+} from "../types/one-pass-flow-types";
 
 const getEdgeType = (data?: OnePassFlowEdgeDataType) => {
   if ((data?.target?.data.parentIds?.length ?? 1) > 1) return "EndEdge";
@@ -17,20 +21,24 @@ const getEdgeType = (data?: OnePassFlowEdgeDataType) => {
 
 export const buildEdge = (
   id: string,
-  source: string,
-  target: string,
   data: OnePassFlowEdgeDataType,
-): Edge => ({
-  id,
-  source,
-  target,
-  focusable: false,
-  markerEnd: {
-    type: MarkerType.ArrowClosed,
-  },
-  type: getEdgeType(data),
-  data: {
-    ...data,
-    status: undefined,
-  },
-});
+  onTransformEdge?: OnTransformEdgeType,
+): Edge => {
+  const rest = onTransformEdge && onTransformEdge(id, data);
+
+  return {
+    id,
+    source: data.source.id,
+    target: data.target.id,
+    focusable: false,
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+    },
+    type: getEdgeType(data),
+    data: {
+      ...data,
+      status: undefined,
+    },
+    ...rest,
+  };
+};
