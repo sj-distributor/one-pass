@@ -1,5 +1,5 @@
-import { useNodesState } from "@xyflow/react";
-import { ForwardedRef, useImperativeHandle, useState } from "react";
+import { useEdgesState, useNodesState } from "@xyflow/react";
+import { ForwardedRef, useImperativeHandle } from "react";
 
 import {
   Edge,
@@ -13,9 +13,11 @@ export const useStore = (
   props: IUseStoreProps,
   ref?: ForwardedRef<OnePassFlowRefType>,
 ) => {
-  const [nodes, setNodes] = useNodesState<Node>([]);
+  const { onTransformNode, onTransformEdge } = props;
 
-  const [edges, setEdges] = useState<Edge[]>([]);
+  const [nodes, setNodes, onNodeChange] = useNodesState<Node>([]);
+
+  const [edges, setEdges, onEdgeChange] = useEdgesState<Edge>([]);
 
   const handleUpdate = (nodes: Node[], edges: Edge[]) => {
     setNodes(nodes);
@@ -23,7 +25,11 @@ export const useStore = (
   };
 
   const handleSetData = (data: OnePassFlowNodeDataType[]) => {
-    const { nodes, edges } = getTreeNodes(data);
+    const { nodes, edges } = getTreeNodes(
+      data,
+      onTransformNode,
+      onTransformEdge,
+    );
 
     setNodes(nodes);
     setEdges(edges);
@@ -33,6 +39,8 @@ export const useStore = (
     data: nodes,
     handleUpdate,
     handleSetData,
+    onNodeChange,
+    onEdgeChange,
   }));
 
   return {

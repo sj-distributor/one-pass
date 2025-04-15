@@ -1,6 +1,6 @@
 {
   "name": "one-pass-flow",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.2",
   "description": "",
   "private": false,
   "scripts": {
@@ -9,11 +9,12 @@
   },
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
-  "types": "dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "eslintConfig": {
@@ -56,5 +57,14 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
     "access": "public"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sj-distributor/one-pass",
+    "directory": "packages/flow"
+  },
+  "bugs": {
+    "url": "https://github.com/sj-distributor/one-pass/issues"
+  },
+  "homepage": "https://github.com/sj-distributor/one-pass"
 }

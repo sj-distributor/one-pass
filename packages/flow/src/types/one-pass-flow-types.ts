@@ -5,34 +5,33 @@ import {
   Node as XyflowNode,
   NodeProps as XyflowNodeProps,
   NodeTypes as XyflowNodeTypes,
+  OnEdgesChange,
+  OnNodesChange,
   ReactFlowProps,
 } from "@xyflow/react";
 import { ComponentType } from "react";
 
 export type OnePassFlowNodeDataType = {
+  [key: string]: any;
   name?: string;
   id: string;
   // TODO: 可能会移除
   parentId: string;
   parentIds?: string[];
-  //   handler?: null;
   type: string;
-  //   expressionInit?: null;
   sortNumber?: number;
   description?: string;
   status?: "error" | "warning" | "success";
-  //   setting?: ConditionDateSettingType | ApproverSettingType;
   conditionPriority?: number;
   formId?: string;
-  //   formSetting?: IDataType[];
 };
 
 export type Node<T extends Record<string, unknown> = Record<string, unknown>> =
   XyflowNode<OnePassFlowNodeDataType & T>;
 
 export type OnePassFlowEdgeDataType = {
-  source?: Node;
-  target?: Node;
+  source: Node;
+  target: Node;
   status?: "error" | "warning" | "success";
   message?: string;
 };
@@ -65,14 +64,28 @@ export type EdgeTypes = XyflowEdgeTypes & {
 // TODO: 后续会按实际情况进行调整
 export type OnePassFlowRefType = {
   data: any[];
+  onNodeChange?: OnNodesChange<Node>;
+  onEdgeChange?: OnEdgesChange<Edge>;
   handleSetData: (data: OnePassFlowNodeDataType[]) => void;
   handleUpdate: (nodes: Node[], edges: Edge[]) => void;
 };
+
+export type OnTransformNodeType = (
+  id: string,
+  data: OnePassFlowNodeDataType,
+) => Partial<Node>;
+
+export type OnTransformEdgeType = (
+  id: string,
+  data: OnePassFlowEdgeDataType,
+) => Partial<Edge>;
 
 export interface IOnePassFlowProps extends Omit<ReactFlowProps, "height"> {
   nodeTypes: NodeTypes;
   edgeTypes: EdgeTypes;
   flowRef?: React.RefObject<OnePassFlowRefType>;
+  onTransformNode?: OnTransformNodeType;
+  onTransformEdge?: OnTransformEdgeType;
 }
 
 export interface IUseStoreProps extends IOnePassFlowProps {}

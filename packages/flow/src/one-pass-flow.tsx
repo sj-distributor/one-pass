@@ -46,7 +46,11 @@ export const Flow = React.forwardRef(
     const { nodes, edges } = useStore(props, ref);
 
     return (
-      <ReactFlow {...omit(["flowRef"], props)} nodes={nodes} edges={edges} />
+      <ReactFlow
+        {...omit(["flowRef", "onTransformNode", "onTransformEdge"], props)}
+        nodes={nodes}
+        edges={edges}
+      />
     );
   },
 );

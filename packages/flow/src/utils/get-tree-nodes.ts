@@ -3,13 +3,21 @@
  */
 import { aperture, assocPath, equals, slice } from "ramda";
 
-import { Edge, Node, OnePassFlowNodeDataType } from "../types";
+import {
+  Edge,
+  Node,
+  OnePassFlowNodeDataType,
+  OnTransformEdgeType,
+  OnTransformNodeType,
+} from "../types/one-pass-flow-types";
 import { buildNode } from "./build-node";
 import { getTreePosition } from "./get-tree-position";
 import { transformFlow } from "./transform-flow";
 
 export const getTreeNodes = (
   tree: OnePassFlowNodeDataType[],
+  onTransformNode?: OnTransformNodeType,
+  onTransformEdge?: OnTransformEdgeType,
 ): { nodes: Node[]; edges: Edge[] } => {
   if (!tree.length) return { nodes: [], edges: [] };
 
@@ -17,18 +25,24 @@ export const getTreeNodes = (
 
   const resultEdges: Edge[] = [];
 
-  const EndNode = buildNode("EndNode", {
-    id: "End",
-    parentId: "End",
-    type: "EndNode",
-  });
+  const EndNode = buildNode(
+    "EndNode",
+    {
+      id: "End",
+      parentId: "End",
+      type: "EndNode",
+    },
+    onTransformNode,
+  );
 
   // 所有根节点+结束节点
   const roots = tree
     .filter(
       (item) => (item.parentIds?.length ?? 1) > 1 || equals("0")(item.parentId),
     )
-    .map((item, index) => buildNode((index + 1).toString(), item))
+    .map((item, index) =>
+      buildNode((index + 1).toString(), item, onTransformNode),
+    )
     .concat(EndNode);
 
   // 添加原始树节点
@@ -38,7 +52,13 @@ export const getTreeNodes = (
   const trees: Array<Node[]> = aperture(2, roots);
 
   trees.map(([start, end]) => {
-    const { currentNode, currentEdge } = transformFlow(start, end, tree);
+    const { currentNode, currentEdge } = transformFlow(
+      start,
+      end,
+      tree,
+      onTransformNode,
+      onTransformEdge,
+    );
 
     // 获取当前树根节点的位置坐标
     const currentRoot = resultNodes.find((item) => item.id === start.id);

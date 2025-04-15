@@ -1,7 +1,7 @@
 import * as d3 from "d3-hierarchy";
 import { omit } from "ramda";
 
-import { Node } from "../types";
+import { Node } from "../types/one-pass-flow-types";
 
 type DataType = Node["data"] & {
   children: DataType[];
