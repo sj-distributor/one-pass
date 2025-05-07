@@ -61,6 +61,8 @@ export const transformFlow = (
         currentRoot,
         end,
         data,
+        onTransformNode,
+        onTransformEdge,
       );
 
       tree.push(currentRoot, ...currentNode);

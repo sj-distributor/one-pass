@@ -102,7 +102,7 @@ export const Card = (props: CardType) => {
         position={Position.Bottom}
         isConnectable={false}
       />
-      {open && renderForm && renderForm({ data, handleOpen: setOpen.set })}
+      {open && renderForm && renderForm({ data, onClose: setOpen.set })}
     </>
   );
 };

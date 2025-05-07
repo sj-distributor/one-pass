@@ -6,7 +6,11 @@ import React from "react";
 import { IAddEdgeProps } from "../../types/add-edge";
 import IconFont from "../iconfonts";
 import { useStore } from "./use-store";
-export const AddEdge = (props: IAddEdgeProps) => {
+export const AddEdge = <
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(
+  props: IAddEdgeProps<T>,
+) => {
   const { edge, isCondition, renderEdgeLabel, renderForm } = props;
 
   const { data } = edge;
@@ -104,7 +108,7 @@ export const AddEdge = (props: IAddEdgeProps) => {
         <div className="one-pass-flow-add-edge-form">
           {open &&
             renderForm &&
-            renderForm(type, data, () => handleOpenChange(false))}
+            renderForm({ type, data, onClose: handleOpenChange })}
         </div>
         {renderEdgeLabel && renderEdgeLabel(edge, renderAddButton)}
       </EdgeLabelRenderer>

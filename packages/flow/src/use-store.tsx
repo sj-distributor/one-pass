@@ -9,23 +9,26 @@ import {
   OnePassFlowRefType,
 } from "./types";
 import { getTreeNodes } from "./utils";
-export const useStore = (
-  props: IUseStoreProps,
-  ref?: ForwardedRef<OnePassFlowRefType>,
+export const useStore = <
+  N extends Record<string, unknown> = Record<string, unknown>,
+  E extends Record<string, unknown> = Record<string, unknown>,
+>(
+  props: IUseStoreProps<N, E>,
+  ref?: ForwardedRef<OnePassFlowRefType<N, E>>,
 ) => {
   const { onTransformNode, onTransformEdge } = props;
 
-  const [nodes, setNodes, onNodeChange] = useNodesState<Node>([]);
+  const [nodes, setNodes, onNodeChange] = useNodesState<Node<N>>([]);
 
-  const [edges, setEdges, onEdgeChange] = useEdgesState<Edge>([]);
+  const [edges, setEdges, onEdgeChange] = useEdgesState<Edge<E>>([]);
 
-  const handleUpdate = (nodes: Node[], edges: Edge[]) => {
+  const handleUpdate = (nodes: Node<N>[], edges: Edge<E>[]) => {
     setNodes(nodes);
     setEdges(edges);
   };
 
   const handleSetData = (data: OnePassFlowNodeDataType[]) => {
-    const { nodes, edges } = getTreeNodes(
+    const { nodes, edges } = getTreeNodes<N, E>(
       data,
       onTransformNode,
       onTransformEdge,
@@ -36,7 +39,8 @@ export const useStore = (
   };
 
   useImperativeHandle(ref, () => ({
-    data: nodes,
+    nodes,
+    edges,
     handleUpdate,
     handleSetData,
     onNodeChange,
