@@ -89,19 +89,13 @@ export type FlowComponentType = <
   },
 ) => JSX.Element;
 
-export type OnTransformNodeType = <
+export type OnTransformNodeType<
   N extends Record<string, unknown> = OnePassFlowNodeDataType,
->(
-  id: string,
-  data: OnePassFlowNodeDataType,
-) => Partial<Node<N>>;
+> = (id: string, data: OnePassFlowNodeDataType) => Partial<Node<N>>;
 
-export type OnTransformEdgeType = <
+export type OnTransformEdgeType<
   E extends Record<string, unknown> = OnePassFlowEdgeDataType,
->(
-  id: string,
-  data: OnePassFlowEdgeDataType,
-) => Partial<Edge<E>>;
+> = (id: string, data: OnePassFlowEdgeDataType) => Partial<Edge<E>>;
 
 export interface IOnePassFlowProps<
   N extends Record<string, unknown> = OnePassFlowNodeDataType,
@@ -110,8 +104,8 @@ export interface IOnePassFlowProps<
   nodeTypes: NodeTypes<N>;
   edgeTypes: EdgeTypes<E>;
   flowRef?: React.RefObject<OnePassFlowRefType<N, E>>;
-  onTransformNode?: OnTransformNodeType;
-  onTransformEdge?: OnTransformEdgeType;
+  onTransformNode?: OnTransformNodeType<N>;
+  onTransformEdge?: OnTransformEdgeType<E>;
   initByCardHeight?: { includeHiddenNodes?: boolean };
 }
 
