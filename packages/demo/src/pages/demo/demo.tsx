@@ -1,8 +1,10 @@
 import { useMount } from "ahooks";
 import {
   AddEdge,
+  Condition,
   EdgeComponentType,
   EdgeTypes,
+  NodeTypes,
   ONE_PASS_FLOW_DEFAULT_NODE_TYPES,
   OnePassFlow,
   OnePassFlowEdgeDataType,
@@ -12,6 +14,13 @@ import {
 import { useRef } from "react";
 
 import data from "./data.json";
+
+const nodeTypes: NodeTypes = {
+  ...ONE_PASS_FLOW_DEFAULT_NODE_TYPES,
+  ConditionNode: (props) => (
+    <Condition {...props} renderForm={({ data }) => <div>{data.name}</div>} />
+  ),
+};
 
 const EdgesType: EdgeTypes = {
   AddEdge: (rest) => <AddEdge edge={rest} />,
@@ -63,8 +72,9 @@ export const Demo = () => {
   return (
     <div className="text-center h-screen">
       <OnePassFlow<OnePassFlowNodeDataType>
+        initByCardHeight={{ includeHiddenNodes: false }}
         flowRef={flowRef}
-        nodeTypes={ONE_PASS_FLOW_DEFAULT_NODE_TYPES}
+        nodeTypes={nodeTypes}
         edgeTypes={EdgesType}
       />
     </div>

@@ -51,13 +51,21 @@ const FlowInner = <
   props: IOnePassFlowProps<N, E>,
   ref?: ForwardedRef<OnePassFlowRefType<N, E>>,
 ) => {
-  const { nodes, edges } = useStore<N, E>(props, ref);
+  const { nodes, edges, handleOnNodesChange, handleOnEdgesChange } = useStore<
+    N,
+    E
+  >(props, ref);
 
   return (
     <ReactFlow
-      {...omit(["flowRef", "onTransformNode", "onTransformEdge"], props)}
+      {...omit(
+        ["flowRef", "onTransformNode", "onTransformEdge", "initByCardHeight"],
+        props,
+      )}
       nodes={nodes}
       edges={edges}
+      onNodesChange={handleOnNodesChange}
+      onEdgesChange={handleOnEdgesChange}
     />
   );
 };

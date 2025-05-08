@@ -5,8 +5,6 @@ import {
   Node as XyflowNode,
   NodeProps as XyflowNodeProps,
   NodeTypes as XyflowNodeTypes,
-  OnEdgesChange,
-  OnNodesChange,
   ReactFlowProps,
 } from "@xyflow/react";
 import { ComponentType, JSX, RefObject } from "react";
@@ -78,8 +76,6 @@ export type OnePassFlowRefType<
 > = {
   nodes: Node<N>[];
   edges: Edge<E>[];
-  onNodeChange?: OnNodesChange<Node<N>>;
-  onEdgeChange?: OnEdgesChange<Edge<E>>;
   handleSetData: (data: OnePassFlowNodeDataType[]) => void;
   handleUpdate: (nodes: Node<N>[], edges: Edge<E>[]) => void;
 };
@@ -116,6 +112,7 @@ export interface IOnePassFlowProps<
   flowRef?: React.RefObject<OnePassFlowRefType<N, E>>;
   onTransformNode?: OnTransformNodeType;
   onTransformEdge?: OnTransformEdgeType;
+  initByCardHeight?: { includeHiddenNodes?: boolean };
 }
 
 export interface IUseStoreProps<

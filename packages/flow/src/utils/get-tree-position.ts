@@ -1,18 +1,18 @@
 import * as d3 from "d3-hierarchy";
-import { omit } from "ramda";
+import { aperture, omit, slice, startsWith } from "ramda";
 
-import { Node } from "../types/one-pass-flow-types";
+import { Node, OnePassFlowNodeDataType } from "../types/one-pass-flow-types";
 
 type DataType = Node["data"] & {
   children: DataType[];
 };
 
-// TODO: 后续会调整
+// TODO: 后续调整不同层级的计算
 export const getDThreeTree = (
   currentNodes: Node<any>[],
   gap?: number,
   isNodeHeight?: boolean,
-): Node<any>[] => {
+): { nodes: Node[]; nodeHeight: number } => {
   const toTree = (root: DataType) => {
     const children: DataType[] = currentNodes
       .filter((item) => item.data.parentId === root.id)
@@ -57,19 +57,22 @@ export const getDThreeTree = (
     }
   });
 
-  return currentNodes.map((item: Node, index) => {
-    const current = treeNode.find((value) => value.data.id === item.data.id);
+  return {
+    nodes: currentNodes.map((item: Node, index) => {
+      const current = treeNode.find((value) => value.data.id === item.data.id);
 
-    return {
-      ...item,
-      zIndex: currentNodes.length - index,
-      data: { ...omit(["children"], item.data) },
-      position: {
-        x: current?.x ?? item.position.x,
-        y: current?.y ?? item.position.y,
-      },
-    };
-  });
+      return {
+        ...item,
+        zIndex: currentNodes.length - index,
+        data: { ...omit(["children"], item.data) },
+        position: {
+          x: current?.x ?? item.position.x,
+          y: current?.y ?? item.position.y,
+        },
+      };
+    }) as Node[],
+    nodeHeight,
+  };
 };
 
 export const getTreePosition = (
@@ -78,16 +81,59 @@ export const getTreePosition = (
   children: Node[],
   isNodeHeight?: boolean,
 ): Node[] => {
-  const dThreeTree = getDThreeTree(
+  const { nodes, nodeHeight } = getDThreeTree(
     [root, ...children],
     200,
     isNodeHeight,
-  ) as Node[];
+  );
 
-  const maxHeight = Math.max(...dThreeTree.map((item) => item.position.y));
+  const maxHeight = Math.max(...nodes.map((item) => item.position.y));
 
   return [
-    ...dThreeTree,
-    { ...end, position: { x: root.position.x, y: maxHeight + 200 } },
+    ...nodes,
+    {
+      ...end,
+      position: { x: root.position.x, y: maxHeight + nodeHeight },
+    },
   ];
+};
+
+export const getLayout = <
+  T extends Record<string, unknown> = OnePassFlowNodeDataType,
+>(
+  data: Node<T>[],
+): Node<T>[] => {
+  const resultNodes: Node<T>[] = [];
+
+  const roots = data.filter((item) => !item.id.includes("-"));
+
+  resultNodes.push(roots[0]);
+
+  const trees: Array<Node<T>[]> = aperture(2, roots);
+
+  trees.map(([start, end]) => {
+    const currentRoot = resultNodes.find((item) => item.id === start.id);
+
+    if (!currentRoot) {
+      throw new Error("Cannot find the end");
+    }
+
+    const currentNode = data.filter((item) =>
+      startsWith(`${start.id}-`, item.id),
+    );
+
+    // 获取该树所有坐标
+    const nodes = getTreePosition(
+      currentRoot,
+      end,
+      currentNode,
+      true,
+    ) as Node<T>[];
+
+    resultNodes.push(...slice(1, Infinity, nodes));
+  });
+
+  console.log(resultNodes);
+
+  return resultNodes;
 };
