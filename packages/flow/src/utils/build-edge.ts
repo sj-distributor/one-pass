@@ -19,10 +19,12 @@ const getEdgeType = (data?: OnePassFlowEdgeDataType) => {
   }
 };
 
-export const buildEdge = (
+export const buildEdge = <
+  T extends Record<string, unknown> = OnePassFlowEdgeDataType,
+>(
   id: string,
   data: OnePassFlowEdgeDataType,
-  onTransformEdge?: OnTransformEdgeType,
+  onTransformEdge?: OnTransformEdgeType<T>,
 ): Edge => {
   const rest = onTransformEdge && onTransformEdge(id, data);
 

@@ -6,6 +6,7 @@ import { aperture, assocPath, equals, slice } from "ramda";
 import {
   Edge,
   Node,
+  OnePassFlowEdgeDataType,
   OnePassFlowNodeDataType,
   OnTransformEdgeType,
   OnTransformNodeType,
@@ -15,12 +16,12 @@ import { getTreePosition } from "./get-tree-position";
 import { transformFlow } from "./transform-flow";
 
 export const getTreeNodes = <
-  N extends Record<string, unknown> = Record<string, unknown>,
-  E extends Record<string, unknown> = Record<string, unknown>,
+  N extends Record<string, unknown> = OnePassFlowNodeDataType,
+  E extends Record<string, unknown> = OnePassFlowEdgeDataType,
 >(
   tree: OnePassFlowNodeDataType[],
-  onTransformNode?: OnTransformNodeType,
-  onTransformEdge?: OnTransformEdgeType,
+  onTransformNode?: OnTransformNodeType<N>,
+  onTransformEdge?: OnTransformEdgeType<E>,
 ): { nodes: Node<N>[]; edges: Edge<E>[] } => {
   if (!tree.length) return { nodes: [], edges: [] };
 

@@ -14,13 +14,14 @@ import {
   Edge,
   IUseStoreProps,
   Node,
+  OnePassFlowEdgeDataType,
   OnePassFlowNodeDataType,
   OnePassFlowRefType,
 } from "./types";
 import { getLayout, getTreeNodes } from "./utils";
 export const useStore = <
-  N extends Record<string, unknown> = Record<string, unknown>,
-  E extends Record<string, unknown> = Record<string, unknown>,
+  N extends Record<string, unknown> = OnePassFlowNodeDataType,
+  E extends Record<string, unknown> = OnePassFlowEdgeDataType,
 >(
   props: IUseStoreProps<N, E>,
   ref?: ForwardedRef<OnePassFlowRefType<N, E>>,
