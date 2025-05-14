@@ -5,11 +5,9 @@ import {
   Node as XyflowNode,
   NodeProps as XyflowNodeProps,
   NodeTypes as XyflowNodeTypes,
-  OnEdgesChange,
-  OnNodesChange,
   ReactFlowProps,
 } from "@xyflow/react";
-import { ComponentType } from "react";
+import { ComponentType, JSX, RefObject } from "react";
 
 export type OnePassFlowNodeDataType = {
   [key: string]: any;
@@ -29,9 +27,11 @@ export type OnePassFlowNodeDataType = {
 export type Node<T extends Record<string, unknown> = Record<string, unknown>> =
   XyflowNode<OnePassFlowNodeDataType & T>;
 
-export type OnePassFlowEdgeDataType = {
-  source: Node;
-  target: Node;
+export type OnePassFlowEdgeDataType<
+  T extends Record<string, unknown> = OnePassFlowNodeDataType,
+> = {
+  source: Node<T>;
+  target: Node<T>;
   status?: "error" | "warning" | "success";
   message?: string;
 };
@@ -39,53 +39,77 @@ export type OnePassFlowEdgeDataType = {
 export type Edge<T extends Record<string, unknown> = Record<string, unknown>> =
   XyflowEdge<OnePassFlowEdgeDataType & T>;
 
-export type NodeComponentType = XyflowNodeProps<Node> & {
+export type NodeComponentType<
+  T extends Record<string, unknown> = OnePassFlowNodeDataType,
+> = XyflowNodeProps<Node<T>> & {
   type: any;
 };
 
-export type EdgeComponentType = XyflowEdgeProps<Edge> & {
+export type EdgeComponentType<
+  T extends Record<string, unknown> = OnePassFlowEdgeDataType,
+> = XyflowEdgeProps<Edge<T>> & {
   type: any;
 };
 
-export type NodeTypes = XyflowNodeTypes & {
-  InitiatorNode: ComponentType<NodeComponentType>;
-  ConditionNode: ComponentType<NodeComponentType>;
-  ApproverNode: ComponentType<NodeComponentType>;
-  CcRecipientNode: ComponentType<NodeComponentType>;
-  EndNode: ComponentType<NodeComponentType>;
+export type NodeTypes<
+  T extends Record<string, unknown> = OnePassFlowNodeDataType,
+> = XyflowNodeTypes & {
+  InitiatorNode: ComponentType<NodeComponentType<T>>;
+  ConditionNode: ComponentType<NodeComponentType<T>>;
+  ApproverNode: ComponentType<NodeComponentType<T>>;
+  CcRecipientNode: ComponentType<NodeComponentType<T>>;
+  EndNode: ComponentType<NodeComponentType<T>>;
 };
 
-export type EdgeTypes = XyflowEdgeTypes & {
-  AddEdge: ComponentType<EdgeComponentType>;
-  ConditionEdge: ComponentType<EdgeComponentType>;
-  EndEdge: ComponentType<EdgeComponentType>;
+export type EdgeTypes<
+  T extends Record<string, unknown> = OnePassFlowEdgeDataType,
+> = XyflowEdgeTypes & {
+  AddEdge: ComponentType<EdgeComponentType<T>>;
+  ConditionEdge: ComponentType<EdgeComponentType<T>>;
+  EndEdge: ComponentType<EdgeComponentType<T>>;
 };
 
 // TODO: 后续会按实际情况进行调整
-export type OnePassFlowRefType = {
-  data: any[];
-  onNodeChange?: OnNodesChange<Node>;
-  onEdgeChange?: OnEdgesChange<Edge>;
+export type OnePassFlowRefType<
+  N extends Record<string, unknown> = OnePassFlowNodeDataType,
+  E extends Record<string, unknown> = OnePassFlowEdgeDataType,
+> = {
+  nodes: Node<N>[];
+  edges: Edge<E>[];
   handleSetData: (data: OnePassFlowNodeDataType[]) => void;
-  handleUpdate: (nodes: Node[], edges: Edge[]) => void;
+  handleUpdate: (nodes: Node<N>[], edges: Edge<E>[]) => void;
 };
 
-export type OnTransformNodeType = (
-  id: string,
-  data: OnePassFlowNodeDataType,
-) => Partial<Node>;
+export type FlowComponentType = <
+  N extends Record<string, unknown> = OnePassFlowNodeDataType,
+  E extends Record<string, unknown> = OnePassFlowEdgeDataType,
+>(
+  props: IOnePassFlowProps<N, E> & {
+    ref?: RefObject<OnePassFlowRefType<N, E>>;
+  },
+) => JSX.Element;
 
-export type OnTransformEdgeType = (
-  id: string,
-  data: OnePassFlowEdgeDataType,
-) => Partial<Edge>;
+export type OnTransformNodeType<
+  N extends Record<string, unknown> = OnePassFlowNodeDataType,
+> = (id: string, data: OnePassFlowNodeDataType) => Partial<Node<N>>;
 
-export interface IOnePassFlowProps extends Omit<ReactFlowProps, "height"> {
-  nodeTypes: NodeTypes;
-  edgeTypes: EdgeTypes;
-  flowRef?: React.RefObject<OnePassFlowRefType>;
-  onTransformNode?: OnTransformNodeType;
-  onTransformEdge?: OnTransformEdgeType;
+export type OnTransformEdgeType<
+  E extends Record<string, unknown> = OnePassFlowEdgeDataType,
+> = (id: string, data: OnePassFlowEdgeDataType) => Partial<Edge<E>>;
+
+export interface IOnePassFlowProps<
+  N extends Record<string, unknown> = OnePassFlowNodeDataType,
+  E extends Record<string, unknown> = OnePassFlowEdgeDataType,
+> extends Omit<ReactFlowProps, "height"> {
+  nodeTypes: NodeTypes<N>;
+  edgeTypes: EdgeTypes<E>;
+  flowRef?: React.RefObject<OnePassFlowRefType<N, E>>;
+  onTransformNode?: OnTransformNodeType<N>;
+  onTransformEdge?: OnTransformEdgeType<E>;
+  initByCardHeight?: { includeHiddenNodes?: boolean };
 }
 
-export interface IUseStoreProps extends IOnePassFlowProps {}
+export interface IUseStoreProps<
+  N extends Record<string, unknown> = OnePassFlowNodeDataType,
+  E extends Record<string, unknown> = OnePassFlowEdgeDataType,
+> extends IOnePassFlowProps<N, E> {}

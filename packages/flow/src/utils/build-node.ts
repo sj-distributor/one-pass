@@ -4,10 +4,12 @@ import {
   OnTransformNodeType,
 } from "../types/one-pass-flow-types";
 
-export const buildNode = (
+export const buildNode = <
+  N extends Record<string, unknown> = OnePassFlowNodeDataType,
+>(
   id: string,
   data: OnePassFlowNodeDataType,
-  onTransformNode?: OnTransformNodeType,
+  onTransformNode?: OnTransformNodeType<N>,
 ): Node => {
   const rest = onTransformNode && onTransformNode(id, data);
 

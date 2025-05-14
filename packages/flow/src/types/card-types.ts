@@ -4,7 +4,7 @@ import { Node, NodeComponentType } from "./one-pass-flow-types";
 
 export interface IRenderFormProps {
   data: Node["data"];
-  handleOpen: (value: boolean) => void;
+  onClose: (value: boolean) => void;
 }
 
 export type CardType = NodeComponentType & {

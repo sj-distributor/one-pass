@@ -3,7 +3,11 @@ import { useState } from "react";
 
 import { IAddEdgeProps } from "../../types/add-edge";
 
-export const useStore = (props: IAddEdgeProps) => {
+export const useStore = <
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(
+  props: IAddEdgeProps<T>,
+) => {
   const { edge, isCondition, isEnd, addButtonPosition } = props;
 
   const [type, setType] = useState<string>("");

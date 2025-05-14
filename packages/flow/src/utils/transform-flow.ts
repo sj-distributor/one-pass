@@ -1,6 +1,7 @@
 import {
   Edge,
   Node,
+  OnePassFlowEdgeDataType,
   OnePassFlowNodeDataType,
   OnTransformEdgeType,
   OnTransformNodeType,
@@ -8,12 +9,15 @@ import {
 import { buildEdge } from "./build-edge";
 import { buildNode } from "./build-node";
 
-export const transformFlow = (
+export const transformFlow = <
+  N extends Record<string, unknown> = OnePassFlowNodeDataType,
+  E extends Record<string, unknown> = OnePassFlowEdgeDataType,
+>(
   root: Node,
   end: Node,
   data: OnePassFlowNodeDataType[],
-  onTransformNode?: OnTransformNodeType,
-  onTransformEdge?: OnTransformEdgeType,
+  onTransformNode?: OnTransformNodeType<N>,
+  onTransformEdge?: OnTransformEdgeType<E>,
 ): {
   currentNode: Node[];
   currentEdge: Edge[];
@@ -61,6 +65,8 @@ export const transformFlow = (
         currentRoot,
         end,
         data,
+        onTransformNode,
+        onTransformEdge,
       );
 
       tree.push(currentRoot, ...currentNode);
