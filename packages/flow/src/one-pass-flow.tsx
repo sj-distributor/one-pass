@@ -5,6 +5,7 @@ import { omit } from "ramda";
 import React, { ForwardedRef, forwardRef } from "react";
 
 import { Approver } from "./components/approver/approver";
+import { Card } from "./components/card/card";
 import { Condition } from "./components/condition/condition";
 import { End } from "./components/end/end";
 import { Initiator } from "./components/initiator/initiator";
@@ -27,22 +28,9 @@ export const ONE_PASS_FLOW_DEFAULT_NODE_TYPES = {
   EndNode: (props: NodeComponentType) => <End {...props} />,
 };
 
-// TODO: 暂无引擎设计无法支撑增删改
-// export const ONE_PASS_FLOW_DEFAULT_EDGE_TYPES = {
-//   AddEdge: (rest: EdgeComponentType) => <AddEdge edge={rest} />,
-//   ConditionEdge: (rest: EdgeComponentType) => (
-//     <AddEdge edge={rest} isCondition />
-//   ),
-//   EndEdge: (rest: EdgeComponentType) => (
-//     <AddEdge
-//       edge={rest}
-//       isEnd
-//       renderEdgeLabel={(edge, addButton) =>
-//         addButton(edge.targetX, edge.targetY - 20, ["ConditionNode"])
-//       }
-//     />
-//   ),
-// };
+const ONE_PASS_FLOW_NODE_TYPES = {
+  EmptyNode: (props: NodeComponentType) => <Card {...props} />,
+};
 
 const FlowInner = <
   N extends Record<string, unknown> = OnePassFlowNodeDataType,
@@ -56,12 +44,15 @@ const FlowInner = <
     E
   >(props, ref);
 
+  const { nodeTypes } = props;
+
   return (
     <ReactFlow
       {...omit(
         ["flowRef", "onTransformNode", "onTransformEdge", "initByCardHeight"],
         props,
       )}
+      nodeTypes={{ ...nodeTypes, ...ONE_PASS_FLOW_NODE_TYPES }}
       nodes={nodes}
       edges={edges}
       onNodesChange={handleOnNodesChange}

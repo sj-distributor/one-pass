@@ -1,8 +1,3 @@
-/**
- * @description D3处理树状图，后续将调整为其他算法进行处理
- */
-import { aperture, assocPath, equals, slice } from "ramda";
-
 import {
   Edge,
   Node,
@@ -11,100 +6,111 @@ import {
   OnTransformEdgeType,
   OnTransformNodeType,
 } from "../types/one-pass-flow-types";
+import { buildEdge } from "./build-edge";
 import { buildNode } from "./build-node";
-import { getTreePosition } from "./get-tree-position";
-import { transformFlow } from "./transform-flow";
+import { getLayout } from "./get-tree-position";
 
-export const getTreeNodes = <
+export const getTreeNodes = async <
   N extends Record<string, unknown> = OnePassFlowNodeDataType,
   E extends Record<string, unknown> = OnePassFlowEdgeDataType,
 >(
   tree: OnePassFlowNodeDataType[],
   onTransformNode?: OnTransformNodeType<N>,
   onTransformEdge?: OnTransformEdgeType<E>,
-): { nodes: Node<N>[]; edges: Edge<E>[] } => {
+): Promise<{ nodes: Node<N>[]; edges: Edge<E>[] }> => {
   if (!tree.length) return { nodes: [], edges: [] };
+  const root = buildNode("1", tree[0], onTransformNode);
 
-  const resultNodes: Node[] = [];
-
-  const resultEdges: Edge[] = [];
-
-  const EndNode = buildNode(
+  const end = buildNode(
     "EndNode",
     {
       id: "End",
-      parentId: "End",
+      parentId: "",
       type: "EndNode",
     },
     onTransformNode,
   );
 
-  // 所有根节点+结束节点
-  const roots = tree
-    .filter(
-      (item) => (item.parentIds?.length ?? 1) > 1 || equals("0")(item.parentId),
-    )
-    .map((item, index) =>
-      buildNode((index + 1).toString(), item, onTransformNode),
-    )
-    .concat(EndNode);
+  const resultNode: Node[] = [root];
 
-  // 添加原始树节点
-  resultNodes.push(roots[0]);
+  const resultEdge: Edge[] = [];
 
-  // 分成每一颗树的根节点与结束节点
-  const trees: Array<Node[]> = aperture(2, roots);
-
-  trees.map(([start, end]) => {
-    const { currentNode, currentEdge } = transformFlow(
-      start,
-      end,
-      tree,
-      onTransformNode,
-      onTransformEdge,
+  // 转换节点
+  const bfsNode = (root: Node) => {
+    const children = tree.filter((item) =>
+      item.parentIds?.includes(root.data.id),
     );
 
-    // 获取当前树根节点的位置坐标
-    const currentRoot = resultNodes.find((item) => item.id === start.id);
+    const emptyNode: OnePassFlowNodeDataType[] = children.filter(
+      (item) => item.type === "EmptyNode",
+    );
 
-    if (!currentRoot) {
-      throw new Error("Cannot find the end");
+    const otherNode: Node[] = children
+      .filter((item) => item.type !== "EmptyNode")
+      .map((item, index) => {
+        return buildNode(`${root.id}-${index + 1}`, item, onTransformNode);
+      });
+
+    resultNode.push(...otherNode);
+
+    emptyNode.map((item) => {
+      const visited = resultNode.find(
+        (node) => node.type === "EmptyNode" && node.data.id === item.id,
+      );
+
+      if (!visited) {
+        resultNode.push(buildNode(`${root.id}-A`, item, onTransformNode));
+        otherNode.push(buildNode(`${root.id}-A`, item, onTransformNode));
+      }
+    });
+
+    otherNode.map((item) => bfsNode(item));
+  };
+
+  // 转换边
+  const bfsEdge = (root: Node) => {
+    const children: Node[] = tree
+      .filter((item) => item.parentIds?.includes(root.data.id))
+      ?.map((item) => resultNode.find((node) => node.data.id === item.id))
+      .filter((item) => !!item);
+
+    if (!children.length) {
+      const id = `s${root.id}tEnd`;
+
+      const visited = resultEdge.find((edge) => edge.id === id);
+
+      !visited &&
+        resultEdge.push(
+          buildEdge(id, { source: root, target: end }, onTransformEdge),
+        );
     }
 
-    // 处理结束节点添加多个父节点的parentId逻辑
-    if (end.id === "End") {
-      const parentIds = currentEdge
-        .filter((item) => item.target === "End")
-        .map((item) => item.data?.source?.data.id);
+    children.map((item) => {
+      const id = `s${root.id}t${item.id}`;
 
-      const edges =
-        parentIds.length > 1
-          ? currentEdge.map((item) =>
-              item.target === "End"
-                ? assocPath(
-                    ["data", "target", "data", "parentIds"],
-                    parentIds,
-                    item,
-                  )
-                : item,
-            )
-          : currentEdge;
+      const visited = resultEdge.find((edge) => edge.id === id);
 
-      resultEdges.push(...edges);
-      currentEdge.map((item) => item.target === "");
-    } else {
-      resultEdges.push(...currentEdge);
-    }
+      !visited &&
+        resultEdge.push(
+          buildEdge(id, { source: root, target: item }, onTransformEdge),
+        );
+      bfsEdge(item);
+    });
+  };
 
-    // 获取该树所有坐标
-    const nodes = getTreePosition(currentRoot, end, currentNode);
+  bfsNode(root);
 
-    resultNodes.push(...slice(1, Infinity, nodes));
-  });
+  bfsEdge(root);
 
-  // TODO: 后续修正
+  resultNode.push(end);
+
+  const { nodes, edges } = await getLayout<N, E>(
+    resultNode as Node<N>[],
+    resultEdge as Edge<E>[],
+  );
+
   return {
-    nodes: resultNodes as Node<N>[],
-    edges: resultEdges as Edge<E>[],
+    nodes,
+    edges,
   };
 };

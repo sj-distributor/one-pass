@@ -8,7 +8,12 @@ import {
   useNodesState,
   useReactFlow,
 } from "@xyflow/react";
-import { ForwardedRef, useEffect, useImperativeHandle } from "react";
+import {
+  ForwardedRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+} from "react";
 
 import {
   Edge,
@@ -32,7 +37,7 @@ export const useStore = <
 
   const [edges, setEdges, onEdgeChange] = useEdgesState<Edge<E>>([]);
 
-  const { getNodes } = useReactFlow();
+  const { getNodes, updateNode, getEdges } = useReactFlow();
 
   const nodesInitialized = useNodesInitialized({
     includeHiddenNodes: initByCardHeight?.includeHiddenNodes ?? false,
@@ -43,15 +48,15 @@ export const useStore = <
     setEdges(edges);
   };
 
-  const handleSetData = (data: OnePassFlowNodeDataType[]) => {
-    const { nodes, edges } = getTreeNodes<N, E>(
+  const handleSetData = async (data: OnePassFlowNodeDataType[]) => {
+    const result = await getTreeNodes<N, E>(
       data,
       onTransformNode,
       onTransformEdge,
     );
 
-    setNodes(nodes);
-    setEdges(edges);
+    setNodes(result.nodes.slice());
+    setEdges(result.edges.slice());
   };
 
   useImperativeHandle(ref, () => ({
@@ -73,13 +78,22 @@ export const useStore = <
     );
   };
 
+  const handleUpdateLayout = useCallback(async () => {
+    const result = await getLayout(
+      getNodes() as Node<N>[],
+      getEdges() as Edge<E>[],
+    );
+
+    result.nodes.map((item) => {
+      updateNode(item.id, { position: item.position });
+    });
+  }, [getEdges, getNodes, updateNode]);
+
   useEffect(() => {
     if (initByCardHeight && nodesInitialized) {
-      const nodes = getNodes() as Node<N>[];
-
-      setNodes(getLayout(nodes));
+      handleUpdateLayout();
     }
-  }, [getNodes, initByCardHeight, nodesInitialized, setNodes]);
+  }, [getNodes, handleUpdateLayout, initByCardHeight, nodesInitialized]);
 
   return {
     nodes,
