@@ -24,6 +24,7 @@ import {
   OnePassFlowRefType,
 } from "./types";
 import { getLayout, getTreeNodes } from "./utils";
+import { getEmptyNode } from "./utils/get-empty-nodes";
 export const useStore = <
   N extends Record<string, unknown> = OnePassFlowNodeDataType,
   E extends Record<string, unknown> = OnePassFlowEdgeDataType,
@@ -49,8 +50,10 @@ export const useStore = <
   };
 
   const handleSetData = async (data: OnePassFlowNodeDataType[]) => {
+    const tranformData = getEmptyNode(data);
+
     const result = await getTreeNodes<N, E>(
-      data,
+      tranformData,
       onTransformNode,
       onTransformEdge,
     );

@@ -28,6 +28,20 @@
     "sort_number": 1
   },
   {
+    "id": "1",
+    "parentId": "A",
+    "parentIds": ["A"],
+    "name": "1",
+    "description": "许嘉泳(NICO.X)(WXF000455)",
+    "icon": null,
+    "type": "ConditionNode",
+    "handler": null,
+    "expression_init": null,
+    "setting": {},
+    "form_setting": null,
+    "sort_number": 1
+  },
+  {
     "id": "C",
     "parentId": "A",
     "parentIds": ["A"],
@@ -87,23 +101,6 @@
     "sort_number": 3
   },
   {
-    "id": "G",
-    "parentId": "D,E",
-    "parentIds": ["D", "E"],
-    "name": "G",
-    "description": "其他條件進入此流程",
-    "icon": null,
-    "type": "EmptyNode",
-    "handler": null,
-    "expression_init": null,
-    "setting": {
-      "priority": 3,
-      "is_default": 1
-    },
-    "form_setting": null,
-    "sort_number": 3
-  },
-  {
     "id": "H",
     "parentId": "F",
     "parentIds": ["F"],
@@ -122,8 +119,8 @@
   },
   {
     "id": "I",
-    "parentId": "G",
-    "parentIds": ["G"],
+    "parentId": "D,E",
+    "parentIds": ["D", "E"],
     "name": "I",
     "description": "其他條件進入此流程",
     "icon": null,
@@ -138,10 +135,10 @@
     "sort_number": 3
   },
   {
-    "id": "J",
-    "parentId": "G",
-    "parentIds": ["G"],
-    "name": "J",
+    "id": "K",
+    "parentId": "I",
+    "parentIds": ["I"],
+    "name": "K",
     "description": "其他條件進入此流程",
     "icon": null,
     "type": "ConditionNode",
@@ -155,30 +152,13 @@
     "sort_number": 3
   },
   {
-    "id": "K",
-    "parentId": "I,J",
-    "parentIds": ["I", "J"],
-    "name": "K",
+    "id": "J",
+    "parentId": "D, E",
+    "parentIds": ["E", "D"],
+    "name": "J",
     "description": "其他條件進入此流程",
     "icon": null,
-    "type": "EmptyNode",
-    "handler": null,
-    "expression_init": null,
-    "setting": {
-      "priority": 3,
-      "is_default": 1
-    },
-    "form_setting": null,
-    "sort_number": 3
-  },
-  {
-    "id": "L",
-    "parentId": "K,H",
-    "parentIds": ["K", "H"],
-    "name": "L",
-    "description": "其他條件進入此流程",
-    "icon": null,
-    "type": "EmptyNode",
+    "type": "ConditionNode",
     "handler": null,
     "expression_init": null,
     "setting": {
