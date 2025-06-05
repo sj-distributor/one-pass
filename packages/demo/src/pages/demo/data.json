@@ -141,7 +141,7 @@
     "name": "K",
     "description": "其他條件進入此流程",
     "icon": null,
-    "type": "ConditionNode",
+    "type": "ApproverNode",
     "handler": null,
     "expression_init": null,
     "setting": {

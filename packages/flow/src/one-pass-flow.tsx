@@ -29,7 +29,7 @@ export const ONE_PASS_FLOW_DEFAULT_NODE_TYPES = {
 };
 
 const ONE_PASS_FLOW_NODE_TYPES = {
-  EmptyNode: (props: NodeComponentType) => <Empty {...props} />,
+  EmptyNode: () => <Empty />,
 };
 
 const FlowInner = <

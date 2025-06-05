@@ -99,6 +99,7 @@ export const Card = (props: CardType) => {
       <Handle
         type="source"
         className="one-pass-card-source-handle"
+        style={{ opacity: 0, marginBottom: -4 }}
         position={Position.Bottom}
         isConnectable={false}
       />

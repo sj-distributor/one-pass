@@ -16,6 +16,18 @@ export const getLayout = async <
   nodes: Node<N>[],
   edges: Edge<E>[],
 ): Promise<{ nodes: Node<N>[]; edges: Edge<E>[] }> => {
+  const heightMap = new Map<number, number>();
+
+  nodes.map((node) => {
+    if (node.id === "EndNode") return;
+    const id = node.id.split("-").length;
+
+    heightMap.set(
+      id,
+      Math.max(heightMap.get(id) ?? 0, node.measured?.height ?? 0),
+    );
+  });
+
   const graph = {
     id: "root",
     layoutOptions: {
@@ -24,7 +36,7 @@ export const getLayout = async <
       "elk.layered.nodePlacement.bk.fixedAlignment": "BALANCED",
       "elk.layered.considerModelOrder.strategy": "PREFER_NODES",
       "elk.layered.layering.strategy": "LONGEST_PATH_SOURCE",
-      "elk.layered.spacing.nodeNodeBetweenLayers": "88",
+      "elk.layered.spacing.nodeNodeBetweenLayers": "120",
       "elk.spacing.nodeNode": "32",
     },
     children: nodes.map((node) => ({
@@ -32,7 +44,10 @@ export const getLayout = async <
       targetPosition: "top",
       sourcePosition: "bottom",
       width: node.type === "EmptyNode" ? 1 : (node?.measured?.width ?? 200),
-      height: node.type === "EmptyNode" ? 1 : (node?.measured?.height ?? 88),
+      height:
+        node.type === "EmptyNode"
+          ? 1
+          : heightMap.get(node.id.split("-").length) || 88,
     })),
     edges,
   };
