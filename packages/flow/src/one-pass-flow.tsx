@@ -5,8 +5,8 @@ import { omit } from "ramda";
 import React, { ForwardedRef, forwardRef } from "react";
 
 import { Approver } from "./components/approver/approver";
-import { Card } from "./components/card/card";
 import { Condition } from "./components/condition/condition";
+import { Empty } from "./components/empty/empty";
 import { End } from "./components/end/end";
 import { Initiator } from "./components/initiator/initiator";
 import { Recipient } from "./components/recipent/recipent";
@@ -29,7 +29,7 @@ export const ONE_PASS_FLOW_DEFAULT_NODE_TYPES = {
 };
 
 const ONE_PASS_FLOW_NODE_TYPES = {
-  EmptyNode: (props: NodeComponentType) => <Card {...props} />,
+  EmptyNode: (props: NodeComponentType) => <Empty {...props} />,
 };
 
 const FlowInner = <

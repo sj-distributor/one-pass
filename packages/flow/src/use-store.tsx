@@ -58,8 +58,8 @@ export const useStore = <
       onTransformEdge,
     );
 
-    setNodes(result.nodes.slice());
-    setEdges(result.edges.slice());
+    setNodes(result.nodes);
+    setEdges(result.edges);
   };
 
   useImperativeHandle(ref, () => ({

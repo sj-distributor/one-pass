@@ -31,20 +31,28 @@ export const getLayout = async <
       ...node,
       targetPosition: "top",
       sourcePosition: "bottom",
-      width: node?.width ?? 200,
-      height: node?.height ?? 88,
+      width: node.type === "EmptyNode" ? 1 : (node?.measured?.width ?? 200),
+      height: node.type === "EmptyNode" ? 1 : (node?.measured?.height ?? 88),
     })),
     edges,
   };
 
   const result = await elk.layout(graph as unknown as ElkNode);
 
+  const layout = nodes.map((node) => {
+    const position = result?.children?.find((item) => item.id === node.id);
+
+    return {
+      ...node,
+      position: {
+        x: position?.x ?? node.position.x,
+        y: position?.y ?? node.position.y,
+      },
+    };
+  });
+
   return {
     edges,
-    nodes:
-      (result?.children?.map((node) => ({
-        ...node,
-        position: { x: node.x, y: node.y },
-      })) as Node<N>[]) || [],
+    nodes: layout,
   };
 };
