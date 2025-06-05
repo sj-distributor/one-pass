@@ -1,11 +1,23 @@
-import { Edge, Node, OnePassFlowNodeDataType } from "../types";
+import {
+  Edge,
+  Node,
+  OnePassFlowEdgeDataType,
+  OnePassFlowNodeDataType,
+  OnTransformEdgeType,
+  OnTransformNodeType,
+} from "../types";
 import { buildEdge } from "./build-edge";
 import { buildNode } from "./build-node";
 
-export const transformFlow = (
+export const transformFlow = <
+  N extends Record<string, unknown> = OnePassFlowNodeDataType,
+  E extends Record<string, unknown> = OnePassFlowEdgeDataType,
+>(
   root: Node,
   end: Node,
   data: OnePassFlowNodeDataType[],
+  onTransformNode?: OnTransformNodeType<N>,
+  onTransformEdge?: OnTransformEdgeType<E>,
 ): {
   currentNode: Node[];
   currentEdge: Edge[];
@@ -20,10 +32,14 @@ export const transformFlow = (
   );
 
   if (!children.length) {
-    const currentBranch = buildEdge(`s${root.id}t${end.id}`, root.id, end.id, {
-      source: root,
-      target: end,
-    });
+    const currentBranch = buildEdge(
+      `s${root.id}t${end.id}`,
+      {
+        source: root,
+        target: end,
+      },
+      onTransformEdge,
+    );
 
     branch.push(currentBranch);
   } else {
@@ -33,23 +49,24 @@ export const transformFlow = (
       const currentRoot = buildNode(
         `${root.id}-${index + 1}`,
         { ...item, conditionPriority: (isCondition && children.length) || 0 },
-        // isCondition && !(item.setting as ConditionDateSettingType)?.isDefault,
+        onTransformNode,
       );
 
       const currentBranch = buildEdge(
         `s${root.id}t${currentRoot.id}`,
-        root.id,
-        currentRoot.id,
         {
           source: root,
           target: currentRoot,
         },
+        onTransformEdge,
       );
 
       const { currentNode, currentEdge } = transformFlow(
         currentRoot,
         end,
         data,
+        onTransformNode,
+        onTransformEdge,
       );
 
       tree.push(currentRoot, ...currentNode);

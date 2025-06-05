@@ -2,16 +2,20 @@ import "@xyflow/react/dist/style.css";
 
 import { ReactFlow, ReactFlowProvider } from "@xyflow/react";
 import { omit } from "ramda";
-import React, { ForwardedRef } from "react";
+import React, { ForwardedRef, forwardRef } from "react";
 
 import { Approver } from "./components/approver/approver";
 import { Condition } from "./components/condition/condition";
+import { Empty } from "./components/empty/empty";
 import { End } from "./components/end/end";
 import { Initiator } from "./components/initiator/initiator";
 import { Recipient } from "./components/recipent/recipent";
 import {
+  FlowComponentType,
   IOnePassFlowProps,
   NodeComponentType,
+  OnePassFlowEdgeDataType,
+  OnePassFlowNodeDataType,
   OnePassFlowRefType,
 } from "./types";
 import { useStore } from "./use-store";
@@ -24,35 +28,48 @@ export const ONE_PASS_FLOW_DEFAULT_NODE_TYPES = {
   EndNode: (props: NodeComponentType) => <End {...props} />,
 };
 
-// TODO: 暂无引擎设计无法支撑增删改
-// export const ONE_PASS_FLOW_DEFAULT_EDGE_TYPES = {
-//   AddEdge: (rest: EdgeComponentType) => <AddEdge edge={rest} />,
-//   ConditionEdge: (rest: EdgeComponentType) => (
-//     <AddEdge edge={rest} isCondition />
-//   ),
-//   EndEdge: (rest: EdgeComponentType) => (
-//     <AddEdge
-//       edge={rest}
-//       isEnd
-//       renderEdgeLabel={(edge, addButton) =>
-//         addButton(edge.targetX, edge.targetY - 20, ["ConditionNode"])
-//       }
-//     />
-//   ),
-// };
+const ONE_PASS_FLOW_NODE_TYPES = {
+  EmptyNode: () => <Empty />,
+};
 
-export const Flow = React.forwardRef(
-  (props: IOnePassFlowProps, ref?: ForwardedRef<OnePassFlowRefType>) => {
-    const { nodes, edges } = useStore(props, ref);
+const FlowInner = <
+  N extends Record<string, unknown> = OnePassFlowNodeDataType,
+  E extends Record<string, unknown> = OnePassFlowEdgeDataType,
+>(
+  props: IOnePassFlowProps<N, E>,
+  ref?: ForwardedRef<OnePassFlowRefType<N, E>>,
+) => {
+  const { nodes, edges, handleOnNodesChange, handleOnEdgesChange } = useStore<
+    N,
+    E
+  >(props, ref);
 
-    return (
-      <ReactFlow {...omit(["flowRef"], props)} nodes={nodes} edges={edges} />
-    );
-  },
-);
+  const { nodeTypes } = props;
 
-export const OnePassFlow = (props: IOnePassFlowProps) => (
+  return (
+    <ReactFlow
+      {...omit(
+        ["flowRef", "onTransformNode", "onTransformEdge", "initByCardHeight"],
+        props,
+      )}
+      nodeTypes={{ ...nodeTypes, ...ONE_PASS_FLOW_NODE_TYPES }}
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={handleOnNodesChange}
+      onEdgesChange={handleOnEdgesChange}
+    />
+  );
+};
+
+const Flow = forwardRef(FlowInner) as FlowComponentType;
+
+export const OnePassFlow = <
+  N extends Record<string, unknown> = OnePassFlowNodeDataType,
+  E extends Record<string, unknown> = OnePassFlowEdgeDataType,
+>(
+  props: IOnePassFlowProps<N, E>,
+) => (
   <ReactFlowProvider>
-    <Flow {...props} ref={props.flowRef} />
+    <Flow<N, E> {...props} ref={props.flowRef} />
   </ReactFlowProvider>
 );

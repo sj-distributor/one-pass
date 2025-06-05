@@ -124,6 +124,9 @@ importers:
       ahooks:
         specifier: ^3.7.4
         version: 3.8.4(react@19.0.0)
+      elkjs:
+        specifier: ^0.10.0
+        version: 0.10.0
       ramda:
         specifier: ^0.29.0
         version: 0.29.1
@@ -1225,6 +1228,9 @@ packages:
 
   electron-to-chromium@1.5.113:
     resolution: {integrity: sha512-wjT2O4hX+wdWPJ76gWSkMhcHAV2PTMX+QetUCPYEdCIe+cxmgzzSSiGRCKW8nuh4mwKZlpv0xvoW7OF2X+wmHg==}
+
+  elkjs@0.10.0:
+    resolution: {integrity: sha512-v/3r+3Bl2NMrWmVoRTMBtHtWvRISTix/s9EfnsfEWApNrsmNjqgqJOispCGg46BPwIFdkag3N/HYSxJczvCm6w==}
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -4196,6 +4202,8 @@ snapshots:
   eastasianwidth@0.2.0: {}
 
   electron-to-chromium@1.5.113: {}
+
+  elkjs@0.10.0: {}
 
   emoji-regex@8.0.0: {}
 

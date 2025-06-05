@@ -1,61 +1,171 @@
 [
   {
-    "id": "1b5c333e-03c7-429e-899c-1dcda0f6d14f",
+    "id": "A",
     "parentId": "0",
     "parentIds": ["0"],
-    "name": "申請人",
-    "description": "SJ Food",
+    "name": "A",
+    "description": "新社团",
     "icon": null,
     "type": "InitiatorNode",
     "handler": null,
-    "expressionInit": null,
-    "setting": {
-      "scopes": {
-        "organizations": {
-          "5e2d8554-cdc7-4d7f-95e4-20ce9b62ee92": "SJ Food"
-        }
-      }
-    },
-    "formSetting": {
-      "fields_permission": {
-        "applyList": 1,
-        "applyType": 3,
-        "remedyType": 1
-      }
-    },
-    "sortNumber": 1
+    "expression_init": null,
+    "setting": {},
+    "form_setting": null,
+    "sort_number": 1
   },
   {
-    "id": "6ad57dad-c3a9-474a-adf4-f3b8d2be7966",
-    "parentId": "1b5c333e-03c7-429e-899c-1dcda0f6d14f",
-    "parentIds": ["1b5c333e-03c7-429e-899c-1dcda0f6d14f"],
-    "name": "審批人",
+    "id": "B",
+    "parentId": "A",
+    "parentIds": ["A"],
+    "name": "B",
+    "description": "许嘉泳(NICO.X)(WXF000455),许嘉泳(NICO.X)(WXF000455),许嘉泳(NICO.X)(WXF000455),许嘉泳(NICO.X)(WXF000455)",
+    "icon": null,
+    "type": "ConditionNode",
+    "handler": null,
+    "expression_init": null,
+    "setting": {},
+    "form_setting": null,
+    "sort_number": 1
+  },
+  {
+    "id": "1",
+    "parentId": "A",
+    "parentIds": ["A"],
+    "name": "1",
     "description": "许嘉泳(NICO.X)(WXF000455)",
+    "icon": null,
+    "type": "ConditionNode",
+    "handler": null,
+    "expression_init": null,
+    "setting": {},
+    "form_setting": null,
+    "sort_number": 1
+  },
+  {
+    "id": "C",
+    "parentId": "A",
+    "parentIds": ["A"],
+    "name": "C",
+    "description": "申請人: 篮球组2",
+    "icon": null,
+    "type": "ConditionNode",
+    "handler": null,
+    "expression_init": null,
+    "setting": {},
+    "form_setting": null,
+    "sort_number": 1
+  },
+  {
+    "id": "D",
+    "parentId": "B",
+    "parentIds": ["B"],
+    "name": "D",
+    "description": "其他條件進入此流程",
+    "icon": null,
+    "type": "ConditionNode",
+    "handler": null,
+    "expression_init": null,
+    "setting": {},
+    "form_setting": null,
+    "sort_number": 3
+  },
+  {
+    "id": "E",
+    "parentId": "B",
+    "parentIds": ["B"],
+    "name": "E",
+    "description": "分組: 陈土佳(IAN.C)(HD000173)",
+    "icon": null,
+    "type": "ConditionNode",
+    "handler": null,
+    "expression_init": null,
+    "setting": {},
+    "form_setting": null,
+    "sort_number": 2
+  },
+  {
+    "id": "F",
+    "parentId": "C",
+    "parentIds": ["C"],
+    "name": "F",
+    "description": "其他條件進入此流程",
     "icon": null,
     "type": "ApproverNode",
     "handler": null,
-    "expressionInit": null,
+    "expression_init": null,
     "setting": {
-      "approvers": ["06c670df-48de-4579-b756-3ccbe6f0eb7c"],
-      "approverType": 1
+      "priority": 3,
+      "is_default": 1
     },
-    "formSetting": null,
-    "sortNumber": 1
+    "form_setting": null,
+    "sort_number": 3
   },
   {
-    "id": "82dde0af-f5e2-44ee-9160-f055b702a612",
-    "parentId": "6ad57dad-c3a9-474a-adf4-f3b8d2be7966",
-    "parentIds": ["6ad57dad-c3a9-474a-adf4-f3b8d2be7966"],
-    "name": "抄送人",
-    "description": "许嘉泳(NICO.X)(WXF000455)",
+    "id": "H",
+    "parentId": "F",
+    "parentIds": ["F"],
+    "name": "H",
+    "description": "其他條件進入此流程",
     "icon": null,
-    "type": "CcRecipientNode",
+    "type": "ApproverNode",
     "handler": null,
-    "expressionInit": null,
+    "expression_init": null,
     "setting": {
-      "approvers": ["06c670df-48de-4579-b756-3ccbe6f0eb7c"]
+      "priority": 3,
+      "is_default": 1
     },
-    "formSetting": null,
-    "sortNumber": 1
+    "form_setting": null,
+    "sort_number": 3
+  },
+  {
+    "id": "I",
+    "parentId": "D,E",
+    "parentIds": ["D", "E"],
+    "name": "I",
+    "description": "其他條件進入此流程",
+    "icon": null,
+    "type": "ConditionNode",
+    "handler": null,
+    "expression_init": null,
+    "setting": {
+      "priority": 3,
+      "is_default": 1
+    },
+    "form_setting": null,
+    "sort_number": 3
+  },
+  {
+    "id": "K",
+    "parentId": "I",
+    "parentIds": ["I"],
+    "name": "K",
+    "description": "其他條件進入此流程",
+    "icon": null,
+    "type": "ApproverNode",
+    "handler": null,
+    "expression_init": null,
+    "setting": {
+      "priority": 3,
+      "is_default": 1
+    },
+    "form_setting": null,
+    "sort_number": 3
+  },
+  {
+    "id": "J",
+    "parentId": "D, E",
+    "parentIds": ["E", "D"],
+    "name": "J",
+    "description": "其他條件進入此流程",
+    "icon": null,
+    "type": "ConditionNode",
+    "handler": null,
+    "expression_init": null,
+    "setting": {
+      "priority": 3,
+      "is_default": 1
+    },
+    "form_setting": null,
+    "sort_number": 3
   }
 ]
