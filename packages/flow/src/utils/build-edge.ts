@@ -41,6 +41,8 @@ export const buildEdge = <
       ...data,
       status: undefined,
     },
+    deletable: false,
+    selectable: false,
     ...rest,
   };
 };
