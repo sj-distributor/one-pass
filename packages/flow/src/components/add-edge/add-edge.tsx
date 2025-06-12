@@ -6,7 +6,11 @@ import React from "react";
 import { IAddEdgeProps } from "../../types/add-edge";
 import IconFont from "../iconfonts";
 import { useStore } from "./use-store";
-export const AddEdge = (props: IAddEdgeProps) => {
+export const AddEdge = <
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(
+  props: IAddEdgeProps<T>,
+) => {
   const { edge, isCondition, renderEdgeLabel, renderForm } = props;
 
   const { data } = edge;
@@ -14,10 +18,10 @@ export const AddEdge = (props: IAddEdgeProps) => {
   const {
     open,
     edgePath,
-    labelY,
     translateX,
     translateY,
     type,
+    isToEmptyNode,
     setType,
     handleOpenChange,
   } = useStore(props);
@@ -82,7 +86,7 @@ export const AddEdge = (props: IAddEdgeProps) => {
       <XyflowBaseEdge
         id={edge.id}
         path={edgePath}
-        markerEnd={edge.markerEnd}
+        markerEnd={isToEmptyNode ? undefined : edge.markerEnd}
         style={edge.style}
       />
       <EdgeLabelRenderer>
@@ -91,7 +95,7 @@ export const AddEdge = (props: IAddEdgeProps) => {
           <div
             className="one-pass-add-edge-condition-button"
             style={{
-              transform: `translate(-50%, -50%) translate(${edge.sourceX}px,${labelY}px)`,
+              transform: `translate(-50%, -50%) translate(${edge.sourceX}px,${translateY + 40}px)`,
             }}
             onClick={() => {
               setType("ConditionNode");
@@ -104,7 +108,7 @@ export const AddEdge = (props: IAddEdgeProps) => {
         <div className="one-pass-flow-add-edge-form">
           {open &&
             renderForm &&
-            renderForm(type, data, () => handleOpenChange(false))}
+            renderForm({ type, data, onClose: handleOpenChange })}
         </div>
         {renderEdgeLabel && renderEdgeLabel(edge, renderAddButton)}
       </EdgeLabelRenderer>

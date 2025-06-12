@@ -1,23 +1,28 @@
 {
   "name": "one-pass-flow",
-  "version": "0.1.0",
+  "version": "0.2.0-beta.4",
   "description": "",
+  "private": false,
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w"
   },
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
-  "types": "dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "eslintConfig": {
     "extends": "../../.eslintrc.json"
   },
+  "files": [
+    "dist/**/*"
+  ],
   "keywords": [
     "flow",
     "workflow"
@@ -26,6 +31,7 @@
   "license": "MIT",
   "dependencies": {
     "ahooks": "^3.7.4",
+    "elkjs": "^0.10.0",
     "ramda": "^0.29.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -48,5 +54,18 @@
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-postcss": "^4.0.2",
     "typescript": "^5.3.3"
-  }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sj-distributor/one-pass",
+    "directory": "packages/flow"
+  },
+  "bugs": {
+    "url": "https://github.com/sj-distributor/one-pass/issues"
+  },
+  "homepage": "https://github.com/sj-distributor/one-pass"
 }

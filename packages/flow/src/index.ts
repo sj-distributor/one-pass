@@ -9,4 +9,14 @@ export * from "./components/recipent/recipent";
 export * from "./one-pass-flow";
 export * from "./types";
 export * from "./utils";
-export { getSmoothStepPath } from "@xyflow/react";
+export {
+  getSmoothStepPath,
+  NodeAddChange,
+  NodeChange,
+  NodeDimensionChange,
+  NodePositionChange,
+  NodeRemoveChange,
+  NodeReplaceChange,
+  NodeSelectionChange,
+  useReactFlow,
+} from "@xyflow/react";

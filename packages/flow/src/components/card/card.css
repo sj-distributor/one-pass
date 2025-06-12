@@ -1,10 +1,12 @@
 .one-pass-card-error {
   border: 1px solid #f44f4f;
+  padding-bottom: 2px;
   box-shadow: 0 2px 1px 0;
 }
 
 .one-pass-card-warning {
   border: 1px solid #ef9d36;
+  padding-bottom: 2px;
   box-shadow: 0 2px 1px 0;
 }
 
@@ -24,7 +26,8 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border-radius: 8px 8px 0 0;
+  /* unknow why should be 7px  */
+  border-radius: 7px 7px 0 0;
   background-color: #342a5e;
 }
 
@@ -46,7 +49,6 @@
 }
 
 .one-pass-card-content {
-  width: 100%;
   padding: 16px;
   text-align: left;
   color: #342a5e;
