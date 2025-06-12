@@ -47,9 +47,17 @@ export const getTreeNodes = async <
 
     const otherNode: Node[] = children
       .filter((item) => item.type !== "EmptyNode")
-      .map((item, index) => {
-        return buildNode(`${root.id}-${index + 1}`, item, onTransformNode);
-      });
+      .map((item, index) =>
+        buildNode(
+          `${root.id}-${index + 1}`,
+          {
+            ...item,
+            conditionPriority:
+              (item.type === "ConditionNode" && children.length) || 0,
+          },
+          onTransformNode,
+        ),
+      );
 
     resultNode.push(...otherNode);
 

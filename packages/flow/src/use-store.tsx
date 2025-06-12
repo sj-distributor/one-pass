@@ -8,12 +8,7 @@ import {
   useNodesState,
   useReactFlow,
 } from "@xyflow/react";
-import {
-  ForwardedRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-} from "react";
+import { ForwardedRef, useEffect, useImperativeHandle } from "react";
 
 import {
   Edge,
@@ -38,7 +33,7 @@ export const useStore = <
 
   const [edges, setEdges, onEdgeChange] = useEdgesState<Edge<E>>([]);
 
-  const { getNodes, updateNode, getEdges } = useReactFlow();
+  const { getNodes, getEdges, setNodes: updateNodes } = useReactFlow();
 
   const nodesInitialized = useNodesInitialized({
     includeHiddenNodes: initByCardHeight?.includeHiddenNodes ?? false,
@@ -50,6 +45,12 @@ export const useStore = <
   };
 
   const handleSetData = async (data: OnePassFlowNodeDataType[]) => {
+    if (!data.length) {
+      setNodes([]);
+      setEdges([]);
+
+      return;
+    }
     const tranformData = getEmptyNode(data);
 
     const result = await getTreeNodes<N, E>(
@@ -81,22 +82,18 @@ export const useStore = <
     );
   };
 
-  const handleUpdateLayout = useCallback(async () => {
-    const result = await getLayout(
-      getNodes() as Node<N>[],
-      getEdges() as Edge<E>[],
-    );
-
-    result.nodes.map((item) => {
-      updateNode(item.id, { position: item.position });
-    });
-  }, [getEdges, getNodes, updateNode]);
-
   useEffect(() => {
     if (initByCardHeight && nodesInitialized) {
-      handleUpdateLayout();
+      // WHY? Because the nodes are not updated immediately when the handleSetData is called,
+      setTimeout(() => {
+        getLayout(getNodes() as Node<N>[], getEdges() as Edge<E>[]).then(
+          (result) => {
+            updateNodes(result.nodes);
+          },
+        );
+      }, 100);
     }
-  }, [getNodes, handleUpdateLayout, initByCardHeight, nodesInitialized]);
+  }, [getEdges, getNodes, initByCardHeight, nodesInitialized, updateNodes]);
 
   return {
     nodes,
