@@ -4,168 +4,216 @@
     "parentId": "0",
     "parentIds": ["0"],
     "name": "A",
-    "description": "新社团",
-    "icon": null,
-    "type": "InitiatorNode",
+    "description": "待選擇",
+    "type": "CcRecipientNode",
     "handler": null,
-    "expression_init": null,
-    "setting": {},
-    "form_setting": null,
-    "sort_number": 1
+    "expressionInit": null,
+    "sortNumber": 1,
+    "setting": null,
+    "formSetting": [
+      {
+        "key": "cfv27fks",
+        "readOnly": true
+      }
+    ]
   },
   {
     "id": "B",
     "parentId": "A",
     "parentIds": ["A"],
     "name": "B",
-    "description": "许嘉泳(NICO.X)(WXF000455),许嘉泳(NICO.X)(WXF000455),许嘉泳(NICO.X)(WXF000455),许嘉泳(NICO.X)(WXF000455)",
-    "icon": null,
+    "description": "待選擇",
     "type": "ConditionNode",
     "handler": null,
-    "expression_init": null,
-    "setting": {},
-    "form_setting": null,
-    "sort_number": 1
-  },
-  {
-    "id": "1",
-    "parentId": "A",
-    "parentIds": ["A"],
-    "name": "1",
-    "description": "许嘉泳(NICO.X)(WXF000455)",
-    "icon": null,
-    "type": "ConditionNode",
-    "handler": null,
-    "expression_init": null,
-    "setting": {},
-    "form_setting": null,
-    "sort_number": 1
+    "expressionInit": null,
+    "sortNumber": 1,
+    "setting": null,
+    "formSetting": [
+      {
+        "key": "cfv27fks",
+        "readOnly": true
+      }
+    ]
   },
   {
     "id": "C",
     "parentId": "A",
     "parentIds": ["A"],
     "name": "C",
-    "description": "申請人: 篮球组2",
-    "icon": null,
+    "description": "待選擇",
     "type": "ConditionNode",
     "handler": null,
-    "expression_init": null,
-    "setting": {},
-    "form_setting": null,
-    "sort_number": 1
+    "expressionInit": null,
+    "sortNumber": 1,
+    "setting": null,
+    "formSetting": [
+      {
+        "key": "cfv27fks",
+        "readOnly": true
+      }
+    ]
   },
   {
     "id": "D",
     "parentId": "B",
     "parentIds": ["B"],
     "name": "D",
-    "description": "其他條件進入此流程",
-    "icon": null,
+    "description": "待選擇",
     "type": "ConditionNode",
     "handler": null,
-    "expression_init": null,
-    "setting": {},
-    "form_setting": null,
-    "sort_number": 3
+    "expressionInit": null,
+    "sortNumber": 1,
+    "setting": null,
+    "formSetting": [
+      {
+        "key": "cfv27fks",
+        "readOnly": true
+      }
+    ]
   },
   {
     "id": "E",
     "parentId": "B",
     "parentIds": ["B"],
     "name": "E",
-    "description": "分組: 陈土佳(IAN.C)(HD000173)",
-    "icon": null,
+    "description": "待選擇",
     "type": "ConditionNode",
     "handler": null,
-    "expression_init": null,
-    "setting": {},
-    "form_setting": null,
-    "sort_number": 2
+    "expressionInit": null,
+    "sortNumber": 1,
+    "setting": null,
+    "formSetting": [
+      {
+        "key": "cfv27fks",
+        "readOnly": true
+      }
+    ]
   },
   {
     "id": "F",
-    "parentId": "C",
-    "parentIds": ["C"],
+    "parentId": "D",
+    "parentIds": ["D"],
     "name": "F",
-    "description": "其他條件進入此流程",
-    "icon": null,
-    "type": "ApproverNode",
+    "description": "待選擇",
+    "type": "ConditionNode",
     "handler": null,
-    "expression_init": null,
-    "setting": {
-      "priority": 3,
-      "is_default": 1
-    },
-    "form_setting": null,
-    "sort_number": 3
+    "expressionInit": null,
+    "sortNumber": 1,
+    "setting": null,
+    "formSetting": [
+      {
+        "key": "cfv27fks",
+        "readOnly": true
+      }
+    ]
+  },
+  {
+    "id": "G",
+    "parentId": "D",
+    "parentIds": ["D"],
+    "name": "G",
+    "description": "待選擇",
+    "type": "ConditionNode",
+    "handler": null,
+    "expressionInit": null,
+    "sortNumber": 1,
+    "setting": null,
+    "formSetting": [
+      {
+        "key": "cfv27fks",
+        "readOnly": true
+      }
+    ]
   },
   {
     "id": "H",
-    "parentId": "F",
-    "parentIds": ["F"],
+    "parentId": "E",
+    "parentIds": ["E"],
     "name": "H",
-    "description": "其他條件進入此流程",
-    "icon": null,
-    "type": "ApproverNode",
+    "description": "待選擇",
+    "type": "ConditionNode",
     "handler": null,
-    "expression_init": null,
-    "setting": {
-      "priority": 3,
-      "is_default": 1
-    },
-    "form_setting": null,
-    "sort_number": 3
+    "expressionInit": null,
+    "sortNumber": 1,
+    "setting": null,
+    "formSetting": [
+      {
+        "key": "cfv27fks",
+        "readOnly": true
+      }
+    ]
   },
   {
     "id": "I",
-    "parentId": "D,E",
-    "parentIds": ["D", "E"],
+    "parentId": "E",
+    "parentIds": ["E"],
     "name": "I",
-    "description": "其他條件進入此流程",
-    "icon": null,
+    "description": "待選擇",
     "type": "ConditionNode",
     "handler": null,
-    "expression_init": null,
-    "setting": {
-      "priority": 3,
-      "is_default": 1
-    },
-    "form_setting": null,
-    "sort_number": 3
+    "expressionInit": null,
+    "sortNumber": 1,
+    "setting": null,
+    "formSetting": [
+      {
+        "key": "cfv27fks",
+        "readOnly": true
+      }
+    ]
+  },
+  {
+    "id": "L",
+    "parentId": "H,I",
+    "parentIds": ["H", "I"],
+    "name": "L",
+    "description": "待選擇",
+    "type": "ConditionNode",
+    "handler": null,
+    "expressionInit": null,
+    "sortNumber": 1,
+    "setting": null,
+    "formSetting": [
+      {
+        "key": "cfv27fks",
+        "readOnly": true
+      }
+    ]
+  },
+
+  {
+    "id": "J",
+    "parentId": "F,G,L",
+    "parentIds": ["F", "G", "L"],
+    "name": "J",
+    "description": "待選擇",
+    "type": "ConditionNode",
+    "handler": null,
+    "expressionInit": null,
+    "sortNumber": 1,
+    "setting": null,
+    "formSetting": [
+      {
+        "key": "cfv27fks",
+        "readOnly": true
+      }
+    ]
   },
   {
     "id": "K",
-    "parentId": "I",
-    "parentIds": ["I"],
+    "parentId": "F,G,L",
+    "parentIds": ["F", "G", "L"],
     "name": "K",
-    "description": "其他條件進入此流程",
-    "icon": null,
-    "type": "ApproverNode",
-    "handler": null,
-    "expression_init": null,
-    "setting": {
-      "priority": 3,
-      "is_default": 1
-    },
-    "form_setting": null,
-    "sort_number": 3
-  },
-  {
-    "id": "J",
-    "parentId": "D, E",
-    "parentIds": ["E", "D"],
-    "name": "J",
-    "description": "其他條件進入此流程",
-    "icon": null,
+    "description": "待選擇",
     "type": "ConditionNode",
     "handler": null,
-    "expression_init": null,
-    "setting": {
-      "priority": 3,
-      "is_default": 1
-    },
-    "form_setting": null,
-    "sort_number": 3
+    "expressionInit": null,
+    "sortNumber": 1,
+    "setting": null,
+    "formSetting": [
+      {
+        "key": "cfv27fks",
+        "readOnly": true
+      }
+    ]
   }
 ]

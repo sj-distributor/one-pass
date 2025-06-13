@@ -47,17 +47,22 @@ export const getTreeNodes = async <
 
     const otherNode: Node[] = children
       .filter((item) => item.type !== "EmptyNode")
-      .map((item, index) =>
-        buildNode(
-          `${root.id}-${index + 1}`,
-          {
-            ...item,
-            conditionPriority:
-              (item.type === "ConditionNode" && children.length) || 0,
-          },
-          onTransformNode,
-        ),
-      );
+      .map((item, index) => {
+        const visited = resultNode.find((node) => node.data.id === item.id);
+
+        return visited
+          ? null
+          : buildNode(
+              `${root.id}-${index + 1}`,
+              {
+                ...item,
+                conditionPriority:
+                  (item.type === "ConditionNode" && children.length) || 0,
+              },
+              onTransformNode,
+            );
+      })
+      .filter((item) => !!item);
 
     resultNode.push(...otherNode);
 
@@ -67,8 +72,10 @@ export const getTreeNodes = async <
       );
 
       if (!visited) {
-        resultNode.push(buildNode(`${root.id}-A`, item, onTransformNode));
-        otherNode.push(buildNode(`${root.id}-A`, item, onTransformNode));
+        const node = buildNode(`${root.id}-A`, item, onTransformNode);
+
+        resultNode.push(node);
+        otherNode.push(node);
       }
     });
 
