@@ -53,7 +53,9 @@ const getTreeNodesFormLeaves = (
         parentIds.push(key);
       }
     });
-    const id = parentIds.sort().join(",");
+
+    // Due to traversal order issues, the IDs generated directly from parentIds may be out of sequence, resulting in incorrect matching.
+    const id = parentIds.join(",").split(",").sort().join(",");
 
     const node: OnePassFlowNodeDataType = {
       id,
