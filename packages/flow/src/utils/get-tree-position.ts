@@ -133,7 +133,5 @@ export const getLayout = <
     resultNodes.push(...slice(1, Infinity, nodes));
   });
 
-  console.log(resultNodes);
-
   return resultNodes;
 };
