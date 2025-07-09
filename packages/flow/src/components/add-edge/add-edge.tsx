@@ -18,10 +18,10 @@ export const AddEdge = <
   const {
     open,
     edgePath,
-    labelY,
     translateX,
     translateY,
     type,
+    isToEmptyNode,
     setType,
     handleOpenChange,
   } = useStore(props);
@@ -86,7 +86,7 @@ export const AddEdge = <
       <XyflowBaseEdge
         id={edge.id}
         path={edgePath}
-        markerEnd={edge.markerEnd}
+        markerEnd={isToEmptyNode ? undefined : edge.markerEnd}
         style={edge.style}
       />
       <EdgeLabelRenderer>
@@ -95,7 +95,7 @@ export const AddEdge = <
           <div
             className="one-pass-add-edge-condition-button"
             style={{
-              transform: `translate(-50%, -50%) translate(${edge.sourceX}px,${labelY}px)`,
+              transform: `translate(-50%, -50%) translate(${edge.sourceX}px,${translateY + 40}px)`,
             }}
             onClick={() => {
               setType("ConditionNode");

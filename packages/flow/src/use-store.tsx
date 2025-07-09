@@ -19,6 +19,7 @@ import {
   OnePassFlowRefType,
 } from "./types";
 import { getLayout, getTreeNodes } from "./utils";
+import { getEmptyNode } from "./utils/get-empty-nodes";
 export const useStore = <
   N extends Record<string, unknown> = OnePassFlowNodeDataType,
   E extends Record<string, unknown> = OnePassFlowEdgeDataType,
@@ -32,7 +33,7 @@ export const useStore = <
 
   const [edges, setEdges, onEdgeChange] = useEdgesState<Edge<E>>([]);
 
-  const { getNodes } = useReactFlow();
+  const { getNodes, getEdges, setNodes: updateNodes } = useReactFlow();
 
   const nodesInitialized = useNodesInitialized({
     includeHiddenNodes: initByCardHeight?.includeHiddenNodes ?? false,
@@ -43,15 +44,23 @@ export const useStore = <
     setEdges(edges);
   };
 
-  const handleSetData = (data: OnePassFlowNodeDataType[]) => {
-    const { nodes, edges } = getTreeNodes<N, E>(
-      data,
+  const handleSetData = async (data: OnePassFlowNodeDataType[]) => {
+    if (!data.length) {
+      setNodes([]);
+      setEdges([]);
+
+      return;
+    }
+    const tranformData = getEmptyNode(data);
+
+    const result = await getTreeNodes<N, E>(
+      tranformData,
       onTransformNode,
       onTransformEdge,
     );
 
-    setNodes(nodes);
-    setEdges(edges);
+    setNodes(result.nodes);
+    setEdges(result.edges);
   };
 
   useImperativeHandle(ref, () => ({
@@ -75,11 +84,16 @@ export const useStore = <
 
   useEffect(() => {
     if (initByCardHeight && nodesInitialized) {
-      const nodes = getNodes() as Node<N>[];
-
-      setNodes(getLayout(nodes));
+      // WHY? Because the nodes are not updated immediately when the handleSetData is called,
+      setTimeout(() => {
+        getLayout(getNodes() as Node<N>[], getEdges() as Edge<E>[]).then(
+          (result) => {
+            updateNodes(result.nodes);
+          },
+        );
+      }, 100);
     }
-  }, [getNodes, initByCardHeight, nodesInitialized, setNodes]);
+  }, [getEdges, getNodes, initByCardHeight, nodesInitialized, updateNodes]);
 
   return {
     nodes,
