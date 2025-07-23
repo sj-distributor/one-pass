@@ -72,15 +72,15 @@ export const getTreeNodes = <
     }
 
     // 处理结束节点添加多个父节点的parentId逻辑
-    if (end.id === "End") {
+    if (end.id === "EndNode") {
       const parentIds = currentEdge
-        .filter((item) => item.target === "End")
+        .filter((item) => item.target === "EndNode")
         .map((item) => item.data?.source?.data.id);
 
       const edges =
         parentIds.length > 1
           ? currentEdge.map((item) =>
-              item.target === "End"
+              item.target === "EndNode"
                 ? assocPath(
                     ["data", "target", "data", "parentIds"],
                     parentIds,
