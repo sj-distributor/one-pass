@@ -22,6 +22,8 @@ export const AddEdge = <
     translateX,
     translateY,
     type,
+    openType,
+    setOpenType,
     setType,
     handleOpenChange,
   } = useStore(props);
@@ -48,6 +50,7 @@ export const AddEdge = <
   const renderAddButton = (
     translateX: number,
     translateY: number,
+    openType: "normal" | "edgeLabel",
     filter?: string[],
   ) => (
     <div
@@ -69,6 +72,7 @@ export const AddEdge = <
                   onClick={() => {
                     handleOpenChange(true);
                     setType(item.type);
+                    setOpenType(openType || "normal");
                   }}
                 >
                   {item.icon}
@@ -90,7 +94,7 @@ export const AddEdge = <
         style={edge.style}
       />
       <EdgeLabelRenderer>
-        {renderAddButton(translateX, translateY)}
+        {renderAddButton(translateX, translateY, "normal")}
         {isCondition && !renderEdgeLabel && (
           <div
             className="one-pass-add-edge-condition-button"
@@ -108,7 +112,7 @@ export const AddEdge = <
         <div className="one-pass-flow-add-edge-form">
           {open &&
             renderForm &&
-            renderForm({ type, data, onClose: handleOpenChange })}
+            renderForm({ openType, type, data, onClose: handleOpenChange })}
         </div>
         {renderEdgeLabel && renderEdgeLabel(edge, renderAddButton)}
       </EdgeLabelRenderer>

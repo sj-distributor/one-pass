@@ -12,6 +12,8 @@ export const useStore = <
 
   const [type, setType] = useState<string>("");
 
+  const [openType, setOpenType] = useState<"normal" | "edgeLabel">("normal");
+
   const [formOpen, setFormOpen] = useState<boolean>(false);
 
   const [edgePath, labelX, labelY] = getSmoothStepPath({
@@ -41,6 +43,8 @@ export const useStore = <
     translateX,
     translateY,
     type,
+    openType,
+    setOpenType,
     setType,
     handleOpenChange,
   };

@@ -16,10 +16,12 @@ export interface IAddEdgeProps<
     addButtonNode: (
       translateX: number,
       translateY: number,
+      openType: "normal" | "edgeLabel",
       filter?: string[],
     ) => ReactNode,
   ) => ReactNode;
   renderForm?: (props: {
+    openType: "normal" | "edgeLabel";
     type: "ConditionNode" | "ApproverNode" | "CcRecipientNode" | string;
     data: Edge<T>["data"];
     onClose: (value: boolean) => void;

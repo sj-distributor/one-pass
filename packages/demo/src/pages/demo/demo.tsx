@@ -48,10 +48,12 @@ const EdgesType: EdgeTypes = {
         x: edge.targetX,
         y: (edge.targetY + edge.sourceY) / 2,
       })}
-      // renderEdgeLabel={(edge, addButton) =>
-      //   ((edge.data?.parentIds as Array<any>)?.length ?? 0) > 1 &&
-      //   addButton(edge.targetX, edge.targetY - 20, ["ConditionNode"])
-      // }
+      renderEdgeLabel={(edge, addButton) => {
+        return (
+          (edge.data?.target?.data?.parentIds?.length ?? 0) > 1 &&
+          addButton(edge.targetX, edge.targetY - 20, ["ConditionNode"])
+        );
+      }}
     />
   ),
 };
