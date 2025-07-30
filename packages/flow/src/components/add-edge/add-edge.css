@@ -10,6 +10,10 @@
   cursor: pointer;
 }
 
+.one-pass-add-edge-button:hover {
+  z-index: 110;
+}
+
 .one-pass-add-edge-add-button-inner {
   position: relative;
   background-color: #342a5e;
