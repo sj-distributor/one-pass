@@ -14,6 +14,7 @@ import {
 import { useRef } from "react";
 
 import data from "./data.json";
+
 const nodeTypes: NodeTypes = {
   ...ONE_PASS_FLOW_DEFAULT_NODE_TYPES,
   ConditionNode: (props) => (
@@ -65,6 +66,10 @@ export const Demo = () => {
     >(null);
 
   useMount(() => {
+    // const currentId: string[] = [];
+
+    // const parentId: string[] = [];
+
     flowRef.current?.handleSetData(data);
   });
 
