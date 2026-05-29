@@ -511,6 +511,43 @@ function convertLayoutToDAG(treeNodes: TreeNode[]): TreeNode[] {
   }
 
   // Add EndNode
+  // First, clean up orphan EmptyNodes: when a higher-level group redirects
+  // convergence nodes to a new EmptyNode, lower-level EmptyNodes may lose
+  // all their children and become orphan leaves. Remove them via cascading
+  // cleanup so they don't pollute the EndNode's parentIds.
+  let pruneChanged = true;
+
+  while (pruneChanged) {
+    pruneChanged = false;
+    const { children: pruneChildren } = buildMaps(nodes);
+
+    // Collect all non-ConditionNode leaves
+    const allLeaves: string[] = [];
+
+    for (const node of nodes.values()) {
+      if (node.type === "ConditionNode") continue;
+      const outgoing = pruneChildren.get(node.id) || [];
+
+      if (outgoing.length === 0) allLeaves.push(node.id);
+    }
+
+    // Only prune EmptyNodes if there are non-EmptyNode leaves remaining.
+    // When all leaves are EmptyNodes (e.g. examples 3-7 where everything
+    // converges to a single EmptyNode), keep them.
+    const nonEmptyLeaves = allLeaves.filter(
+      (id) => nodes.get(id)!.type !== "EmptyNode",
+    );
+
+    if (nonEmptyLeaves.length > 0) {
+      for (const id of allLeaves) {
+        if (nodes.get(id)!.type === "EmptyNode") {
+          nodes.delete(id);
+          pruneChanged = true;
+        }
+      }
+    }
+  }
+
   const { children } = buildMaps(nodes);
 
   const leafIds: string[] = [];
@@ -999,6 +1036,29 @@ function test() {
   console.log("\n--- extra ---");
   console.log("3 siblings:", normalize(convertLayoutToDAG(ex8Input)));
   console.log("simple chain:", normalize(convertLayoutToDAG(ex9Input)));
+
+  // data.json verification: map parent_ids→parentIds, then check EndNode
+  const fs = require("fs");
+
+  const raw = JSON.parse(fs.readFileSync("data.json", "utf-8"));
+
+  const mapped: TreeNode[] = raw.map((n: any) => ({
+    id: n.id,
+    parentIds: n.parent_ids || n.parentIds || [],
+    type: n.type,
+  }));
+
+  const dagResult = convertLayoutToDAG(mapped);
+
+  const endNode = dagResult.find((n: TreeNode) => n.type === "EndNode");
+
+  if (endNode && endNode.parentIds.length === 1) {
+    console.log("\n✓ data.json (EndNode has 1 parentId)");
+  } else {
+    console.log(
+      `\n✗ data.json FAILED: EndNode has ${endNode?.parentIds.length} parentIds`,
+    );
+  }
 }
 
 test();
