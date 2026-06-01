@@ -11,6 +11,7 @@
 5. EndNode节点为结束节点，在布局树转换为DAG图时，全图只有一个EndNode节点和一个InitiatorNode节点。
 6. ConditionNode可以条件分支再嵌套条件分支，
 7. 虚拟根节点 "0" 不出现在输出中。
+8. EndNode节点的parentIds有且只有一个元素，为汇聚点的id。
 
 ## 输入输出
 
@@ -755,4 +756,55 @@ const dagNodes: TreeNode[] = [
         type: "EndNode",
     }
 ];
+```
+
+### 示例 11
+
+```
+type TreeNode = {
+    id: string;
+    parentIds: string[];
+    type: string;
+}
+
+<!-- 示例布局树 -->
+const treeNodes: TreeNode[] = [
+    {
+        id: "A",
+        parentIds: ["0"],
+        type: "InitiatorNode",
+    },
+    {
+        id: "B",
+        parentIds: ["A"],
+        type: "ConditionNode",
+    },
+    {
+        id: "C",
+        parentIds: ["A"],
+        type: "ConditionNode",
+    },
+    {
+        id: "D",
+        parentIds: ["B"],
+        type: "ConditionNode",
+    },
+    {
+        id: "E",
+        parentIds: ["B"],
+        type: "ConditionNode",
+    },
+    {
+        id: "F",
+        parentIds: ["D"],
+        type: "ConditionNode",
+    },
+    {
+        id: "G",
+        parentIds: ["E"],
+        type: "ConditionNode",
+    }
+]
+
+
 ```
