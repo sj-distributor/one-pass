@@ -21,16 +21,6 @@ export const getTreeNodes = async <
   if (!tree.length) return { nodes: [], edges: [] };
   const root = buildNode("1", tree[0], onTransformNode);
 
-  const end = buildNode(
-    "EndNode",
-    {
-      id: "End",
-      parentIds: [],
-      type: "EndNode",
-    },
-    onTransformNode,
-  );
-
   const resultNode: Node[] = [root];
 
   const resultEdge: Edge[] = [];
@@ -89,17 +79,6 @@ export const getTreeNodes = async <
       ?.map((item) => resultNode.find((node) => node.data.id === item.id))
       .filter((item) => !!item);
 
-    if (!children.length) {
-      const id = `s${root.id}tEnd`;
-
-      const visited = resultEdge.find((edge) => edge.id === id);
-
-      !visited &&
-        resultEdge.push(
-          buildEdge(id, { source: root, target: end }, onTransformEdge),
-        );
-    }
-
     children.map((item) => {
       const id = `s${root.id}t${item.id}`;
 
@@ -116,8 +95,6 @@ export const getTreeNodes = async <
   bfsNode(root);
 
   bfsEdge(root);
-
-  resultNode.push(end);
 
   const { nodes, edges } = await getLayout<N, E>(
     resultNode as Node<N>[],
