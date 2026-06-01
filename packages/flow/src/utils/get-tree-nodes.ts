@@ -25,7 +25,7 @@ export const getTreeNodes = async <
     "EndNode",
     {
       id: "End",
-      parentId: "",
+      parentIds: [],
       type: "EndNode",
     },
     onTransformNode,

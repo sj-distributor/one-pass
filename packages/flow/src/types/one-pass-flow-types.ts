@@ -13,9 +13,7 @@ export type OnePassFlowNodeDataType = {
   [key: string]: any;
   name?: string;
   id: string;
-  // TODO: 可能会移除
-  parentId: string;
-  parentIds?: string[];
+  parentIds: string[];
   type: string;
   sortNumber?: number;
   description?: string;

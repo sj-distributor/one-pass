@@ -8,6 +8,7 @@ import {
   useNodesState,
   useReactFlow,
 } from "@xyflow/react";
+import { clone } from "ramda";
 import { ForwardedRef, useEffect, useImperativeHandle } from "react";
 
 import {
@@ -19,7 +20,7 @@ import {
   OnePassFlowRefType,
 } from "./types";
 import { getLayout, getTreeNodes } from "./utils";
-import { getEmptyNode } from "./utils/get-empty-nodes";
+import { convertLayoutToDAG, getEmptyNode } from "./utils/get-empty-nodes";
 export const useStore = <
   N extends Record<string, unknown> = OnePassFlowNodeDataType,
   E extends Record<string, unknown> = OnePassFlowEdgeDataType,
@@ -51,7 +52,12 @@ export const useStore = <
 
       return;
     }
-    const tranformData = getEmptyNode(data);
+
+    console.log("data", data);
+
+    const tranformData = convertLayoutToDAG(clone(data));
+
+    console.log("tranformData", tranformData, data);
 
     const result = await getTreeNodes<N, E>(
       tranformData,
