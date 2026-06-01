@@ -1,148 +1,4 @@
-import { clone, uniq } from "ramda";
-
 import { OnePassFlowNodeDataType } from "../types/one-pass-flow-types";
-
-const getForkIds = (
-  id: string,
-  rootId: string,
-  data: OnePassFlowNodeDataType[],
-): string[] => {
-  if (id === rootId) return [id];
-  const ids = data.find((node) => id === node.id)?.parentIds?.sort() || [];
-
-  return ids.reduce(
-    (acc, parentId) => [...acc, ...getForkIds(parentId, rootId, data)],
-    [...ids],
-  );
-};
-
-const getTreeNodesFormLeaves = (
-  nodeData: OnePassFlowNodeDataType[],
-  leavesIds: string[],
-  childrenMap: Map<string, string[]>,
-) => {
-  const resultData: OnePassFlowNodeDataType[] = clone(nodeData);
-
-  const treeMap = new Map<string, string[]>();
-
-  const rootId = nodeData[0].id;
-
-  const forkNode = resultData.filter(
-    (item) =>
-      !item.id.includes("emptyNode") &&
-      (childrenMap.get(item.id)?.length ?? 0) > 1,
-  );
-
-  leavesIds.map((item) => {
-    const parentNode = uniq(getForkIds(item, rootId, nodeData)).filter(
-      (item) =>
-        !item.includes("emptyNode") && (childrenMap.get(item)?.length ?? 0) > 1,
-    );
-
-    treeMap.set(item, parentNode);
-  });
-
-  forkNode.reverse().map((current) => {
-    const parentIds: string[] = [];
-
-    const grandParentNode: string[] = [];
-
-    treeMap.forEach((value, key) => {
-      if (value.includes(current.id)) {
-        grandParentNode.push(...value);
-        parentIds.push(key);
-      }
-    });
-
-    // Due to traversal order issues, the IDs generated directly from parentIds may be out of sequence, resulting in incorrect matching.
-    const id = parentIds.join(",").split(",").sort().join(",");
-
-    const node: OnePassFlowNodeDataType = {
-      id,
-      parentIds: parentIds,
-      type: "EmptyNode",
-    };
-
-    parentIds.map((item) => treeMap.delete(item));
-
-    treeMap.set(id, uniq(grandParentNode));
-
-    parentIds.length > 1 && resultData.push(node);
-  });
-
-  return resultData;
-};
-
-const getConvergedNode = (
-  nodeData: OnePassFlowNodeDataType[],
-  multipleNodes: OnePassFlowNodeDataType[],
-  childrenMap: Map<string, string[]>,
-) => {
-  const parentMap = new Map<string, string[]>();
-
-  let resutlData: OnePassFlowNodeDataType[] = clone(nodeData);
-
-  const resultChildrenMap = new Map<string, string[]>(clone(childrenMap));
-
-  multipleNodes.forEach((item) => {
-    const key = item.parentIds?.sort().join(",");
-
-    if (!key) return;
-    parentMap.set(
-      key,
-      parentMap.has(key) ? [...parentMap.get(key)!, item.id] : [item.id],
-    );
-  });
-
-  parentMap.forEach((value, key) => {
-    const result = getTreeNodesFormLeaves(
-      resutlData,
-      key.split(","),
-      childrenMap,
-    );
-
-    value.map((item) => {
-      const index = resutlData.findIndex((node) => node.id === item);
-
-      result[index]["parentIds"] = [key];
-    });
-
-    resutlData = result;
-  });
-
-  return { data: resutlData, childrenMap: resultChildrenMap };
-};
-
-export const getEmptyNode = (data: OnePassFlowNodeDataType[]) => {
-  const childrenMap = new Map<string, string[]>();
-
-  const leaves: string[] = [];
-
-  const multipleNodes: OnePassFlowNodeDataType[] = [];
-
-  data.forEach((item) => {
-    const children = data.filter((node) => node.parentIds?.includes(item.id));
-
-    !children.length && leaves.push(item.id);
-    (item?.parentIds?.length ?? 1) > 1 && multipleNodes.push(item);
-
-    childrenMap.set(
-      item.id,
-      children?.map((item) => item.id),
-    );
-  });
-
-  const { data: convergedData, childrenMap: convergedChildrenMap } =
-    getConvergedNode(data, multipleNodes, childrenMap);
-
-  const result = getTreeNodesFormLeaves(
-    convergedData,
-    leaves,
-    convergedChildrenMap,
-  );
-
-  return result;
-};
 
 /** DAG */
 
@@ -175,10 +31,76 @@ const buildMaps = (nodes: Map<string, OnePassFlowNodeDataType>) => {
   return { children, parents };
 };
 
-function descendants(
+const sameParentSet = (left: string[], right: string[]): boolean => {
+  if (left.length !== right.length) return false;
+  const rightSet = new Set(right);
+
+  return left.every((id) => rightSet.has(id));
+};
+
+const createEmptyNodeId = (
+  parentIds: string[],
+  nodes: Map<string, OnePassFlowNodeDataType>,
+) => {
+  let emptyId = [...parentIds].sort()[0] + "-A";
+
+  while (nodes.has(emptyId)) {
+    emptyId = emptyId + "-A";
+  }
+
+  return emptyId;
+};
+
+const findExistingEmptyNode = (
+  parentIds: string[],
+  nodes: Map<string, OnePassFlowNodeDataType>,
+): OnePassFlowNodeDataType | undefined => {
+  return [...nodes.values()].find(
+    (n) => n.type === "EmptyNode" && sameParentSet(n.parentIds, parentIds),
+  );
+};
+
+const compressParentsWithExistingEmptyNodes = (
+  nodes: Map<string, OnePassFlowNodeDataType>,
+): boolean => {
+  let changed = false;
+
+  let passChanged = true;
+
+  while (passChanged) {
+    passChanged = false;
+
+    const emptyNodes = [...nodes.values()]
+      .filter((node) => node.type === "EmptyNode" && node.parentIds.length > 1)
+      .sort((a, b) => b.parentIds.length - a.parentIds.length);
+
+    for (const node of nodes.values()) {
+      if (node.type === "EmptyNode" || node.type === "EndNode") continue;
+
+      for (const emptyNode of emptyNodes) {
+        if (node.id === emptyNode.id) continue;
+        if (node.parentIds.includes(emptyNode.id)) continue;
+        if (!emptyNode.parentIds.every((pid) => node.parentIds.includes(pid))) {
+          continue;
+        }
+
+        node.parentIds = [
+          ...node.parentIds.filter((pid) => !emptyNode.parentIds.includes(pid)),
+          emptyNode.id,
+        ];
+        changed = true;
+        passChanged = true;
+      }
+    }
+  }
+
+  return changed;
+};
+
+const descendants = (
   startId: string,
   children: Map<string, string[]>,
-): Set<string> {
+): Set<string> => {
   const result = new Set<string>();
 
   const visited = new Set<string>();
@@ -201,13 +123,13 @@ function descendants(
   }
 
   return result;
-}
+};
 
-function distance(
+const distance = (
   startId: string,
   targetId: string,
   children: Map<string, string[]>,
-): number {
+): number => {
   if (startId === targetId) return 0;
   const visited = new Set<string>();
 
@@ -229,15 +151,19 @@ function distance(
   }
 
   return Infinity;
-}
+};
 
-function computeDepths(
+const computeDepths = (
   nodes: Map<string, OnePassFlowNodeDataType>,
   children: Map<string, string[]>,
-): Map<string, number> {
+): Map<string, number> => {
   const depths = new Map<string, number>();
 
-  const root = [...nodes.values()].find((n) => n.type === "InitiatorNode");
+  const root =
+    [...nodes.values()].find((n) => n.type === "InitiatorNode") ||
+    [...nodes.values()].find(
+      (n) => n.parentIds.length === 0 || n.parentIds.includes("0"),
+    );
 
   if (!root) return depths;
 
@@ -280,13 +206,13 @@ function computeDepths(
   }
 
   return depths;
-}
+};
 
-function processGroup(
+const processGroup = (
   group: string[],
   nodes: Map<string, OnePassFlowNodeDataType>,
   children: Map<string, string[]>,
-): { changed: boolean; emptyNode?: OnePassFlowNodeDataType } {
+): { changed: boolean; emptyNode?: OnePassFlowNodeDataType } => {
   // 1. Compute descendants for each group member
   const descByCi = new Map<string, Set<string>>();
 
@@ -404,15 +330,9 @@ function processGroup(
       const branchEndList = [...allBranchEnds].sort();
 
       // Check if an EmptyNode with these exact parents already exists
-      const existingEmpty = [...nodes.values()].find(
-        (n) =>
-          n.type === "EmptyNode" &&
-          n.parentIds.length === branchEndList.length &&
-          n.parentIds.every((p: string) => branchEndList.includes(p)),
-      );
+      const existingEmpty = findExistingEmptyNode(branchEndList, nodes);
 
       if (existingEmpty) {
-        anyChanged = true;
         lastEmptyNode = existingEmpty;
         // Redirect any uncovered nodes that converge at the same
         // branch-ends for this cluster
@@ -435,16 +355,13 @@ function processGroup(
             (pid: string) => !allBranchEnds.has(pid),
           );
           node.parentIds.push(existingEmpty.id);
+          anyChanged = true;
         }
         continue;
       }
 
       // Generate unique EmptyNode ID
-      let emptyId = branchEndList[0] + "-A";
-
-      while ([...nodes.values()].some((n) => n.id === emptyId)) {
-        emptyId = emptyId + "-A";
-      }
+      const emptyId = createEmptyNodeId(branchEndList, nodes);
 
       const emptyNode: OnePassFlowNodeDataType = {
         id: emptyId,
@@ -531,7 +448,7 @@ function processGroup(
     branchEnds.push(deepest);
   }
 
-  const unique = [...new Set(branchEnds)];
+  const unique = [...new Set(branchEnds)].sort();
 
   if (unique.length < 2) return { changed: false };
 
@@ -547,20 +464,11 @@ function processGroup(
   }
 
   // Check if an EmptyNode with these exact parents already exists
-  const existingEmpty = [...nodes.values()].find(
-    (n) =>
-      n.type === "EmptyNode" &&
-      n.parentIds.length === unique.length &&
-      n.parentIds.every((p: string) => unique.includes(p)),
-  );
+  const existingEmpty = findExistingEmptyNode(unique, nodes);
 
   if (existingEmpty) return { changed: false };
 
-  let emptyId = unique.sort()[0] + "-A";
-
-  while ([...nodes.values()].some((n) => n.id === emptyId)) {
-    emptyId = emptyId + "-A";
-  }
+  const emptyId = createEmptyNodeId(unique, nodes);
 
   const emptyNode: OnePassFlowNodeDataType = {
     id: emptyId,
@@ -569,7 +477,7 @@ function processGroup(
   };
 
   return { changed: true, emptyNode };
-}
+};
 
 // layout to DAG
 export const convertLayoutToDAG = (
@@ -579,7 +487,7 @@ export const convertLayoutToDAG = (
   const nodes = new Map<string, OnePassFlowNodeDataType>();
 
   for (const n of treeNodes) {
-    nodes.set(n.id, n);
+    nodes.set(n.id, { ...n, parentIds: [...n.parentIds] });
   }
 
   // Iterate until stable
@@ -592,6 +500,9 @@ export const convertLayoutToDAG = (
   while (changed && iter < MAX_ITER) {
     iter++;
     changed = false;
+    if (compressParentsWithExistingEmptyNodes(nodes)) {
+      changed = true;
+    }
     let { children } = buildMaps(nodes);
 
     // Find ConditionNode groups (nodes with same sorted parentIds, ≥2 members)
@@ -599,7 +510,7 @@ export const convertLayoutToDAG = (
 
     for (const node of nodes.values()) {
       if (node.type !== "ConditionNode") continue;
-      const key = node.parentIds.sort().join(",");
+      const key = [...node.parentIds].sort().join(",");
 
       if (!groupMap.has(key)) groupMap.set(key, []);
       groupMap.get(key)!.push(node.id);
@@ -685,7 +596,6 @@ export const convertLayoutToDAG = (
   const leafIds: string[] = [];
 
   for (const node of nodes.values()) {
-    if (node.type === "ConditionNode") continue;
     const outgoing = children.get(node.id) || [];
 
     if (outgoing.length === 0) {
@@ -693,15 +603,32 @@ export const convertLayoutToDAG = (
     }
   }
 
+  let endParentIds = leafIds.sort();
+
+  if (endParentIds.length > 1) {
+    const existingEmpty = findExistingEmptyNode(endParentIds, nodes);
+
+    if (existingEmpty) {
+      endParentIds = [existingEmpty.id];
+    } else {
+      const finalEmptyNode: OnePassFlowNodeDataType = {
+        id: createEmptyNodeId(endParentIds, nodes),
+        parentIds: endParentIds,
+        type: "EmptyNode",
+      };
+
+      nodes.set(finalEmptyNode.id, finalEmptyNode);
+      endParentIds = [finalEmptyNode.id];
+    }
+  }
+
   const endNode: OnePassFlowNodeDataType = {
     id: "end",
-    parentIds: leafIds.sort(),
+    parentIds: endParentIds,
     type: "EndNode",
   };
 
   nodes.set("end", endNode);
 
   return [...nodes.values()];
-
-  return [];
 };
