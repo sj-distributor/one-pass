@@ -13,6 +13,7 @@ export type OnePassFlowNodeDataType = {
   [key: string]: any;
   name?: string;
   id: string;
+  parentId: string;
   parentIds: string[];
   type: string;
   sortNumber?: number;

@@ -53,11 +53,7 @@ export const useStore = <
       return;
     }
 
-    console.log("data", data);
-
     const tranformData = convertLayoutToDAG(clone(data));
-
-    console.log("tranformData", tranformData, data);
 
     const result = await getTreeNodes<N, E>(
       tranformData,

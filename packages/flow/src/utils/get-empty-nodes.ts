@@ -8,6 +8,8 @@ interface IConvInfo {
   totalDist: number;
 }
 
+const createRandomId = () => Math.random().toString(36).slice(2, 10);
+
 const buildMaps = (nodes: Map<string, OnePassFlowNodeDataType>) => {
   const children = new Map<string, string[]>();
 
@@ -365,6 +367,7 @@ const processGroup = (
 
       const emptyNode: OnePassFlowNodeDataType = {
         id: emptyId,
+        parentId: createRandomId(),
         parentIds: branchEndList,
         type: "EmptyNode",
       };
@@ -472,6 +475,7 @@ const processGroup = (
 
   const emptyNode: OnePassFlowNodeDataType = {
     id: emptyId,
+    parentId: createRandomId(),
     parentIds: unique,
     type: "EmptyNode",
   };
@@ -613,6 +617,7 @@ export const convertLayoutToDAG = (
     } else {
       const finalEmptyNode: OnePassFlowNodeDataType = {
         id: createEmptyNodeId(endParentIds, nodes),
+        parentId: createRandomId(),
         parentIds: endParentIds,
         type: "EmptyNode",
       };
@@ -624,6 +629,7 @@ export const convertLayoutToDAG = (
 
   const endNode: OnePassFlowNodeDataType = {
     id: "end",
+    parentId: createRandomId(),
     parentIds: endParentIds,
     type: "EndNode",
   };
