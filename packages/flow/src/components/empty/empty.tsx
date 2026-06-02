@@ -1,7 +1,7 @@
 import { Handle, Position } from "@xyflow/react";
 import React from "react";
 
-export const Empty = () => {
+export const Empty = React.memo(() => {
   return (
     <div style={{ height: 1, width: 1 }}>
       <Handle
@@ -19,4 +19,4 @@ export const Empty = () => {
       />
     </div>
   );
-};
+});

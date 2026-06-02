@@ -6,7 +6,7 @@ import React from "react";
 
 import type { CardType } from "../../types/card-types";
 import IconFont from "../iconfonts";
-export const Card = (props: CardType) => {
+export const Card = React.memo((props: CardType) => {
   const {
     data,
     hiddenDescription,
@@ -106,4 +106,4 @@ export const Card = (props: CardType) => {
       {open && renderForm && renderForm({ data, onClose: setOpen.set })}
     </>
   );
-};
+});

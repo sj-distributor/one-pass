@@ -10,9 +10,9 @@ export const useStore = <
 ) => {
   const { edge, isCondition, isEnd, addButtonPosition } = props;
 
-  const isFromEmptyNode = edge.data?.source?.type === "EmptyNode";
+  const isFromEmptyNode = edge.data?.sourceType === "EmptyNode";
 
-  const isToEmptyNode = edge.data?.target?.type === "EmptyNode";
+  const isToEmptyNode = edge.data?.targetType === "EmptyNode";
 
   const [type, setType] = useState<string>("");
 

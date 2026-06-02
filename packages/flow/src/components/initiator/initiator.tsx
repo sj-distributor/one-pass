@@ -5,10 +5,10 @@ import { Card } from "../card/card";
 
 type InitiatorType = Omit<CardType, "targetPosition">;
 
-export const Initiator = (props: InitiatorType) => (
+export const Initiator = React.memo((props: InitiatorType) => (
   <Card
     {...props}
     targetPosition={undefined}
     className={props.className ?? "one-pass-card-initiator"}
   />
-);
+));
