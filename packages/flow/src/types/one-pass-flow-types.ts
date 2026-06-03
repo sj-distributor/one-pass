@@ -75,6 +75,8 @@ export type OnePassFlowRefType<
 > = {
   nodes: Node<N>[];
   edges: Edge<E>[];
+  /** 是否正在计算 ELK 布局（加载中） */
+  layouting: boolean;
   handleSetData: (data: OnePassFlowNodeDataType[]) => void;
   handleUpdate: (nodes: Node<N>[], edges: Edge<E>[]) => void;
 };
@@ -106,6 +108,8 @@ export interface IOnePassFlowProps<
   onTransformNode?: OnTransformNodeType<N>;
   onTransformEdge?: OnTransformEdgeType<E>;
   initByCardHeight?: { includeHiddenNodes?: boolean };
+  /** ELK 布局计算状态变化回调，可用于显示 loading */
+  onLayoutingChange?: (layouting: boolean) => void;
 }
 
 export interface IUseStoreProps<

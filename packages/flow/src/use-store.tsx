@@ -9,7 +9,7 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import { clone } from "ramda";
-import { ForwardedRef, useEffect, useImperativeHandle } from "react";
+import { ForwardedRef, useEffect, useImperativeHandle, useState } from "react";
 
 import {
   Edge,
@@ -19,7 +19,7 @@ import {
   OnePassFlowNodeDataType,
   OnePassFlowRefType,
 } from "./types";
-import { getLayout, getTreeNodes } from "./utils";
+import { buildTreeNodes, getLayout } from "./utils";
 import { convertLayoutToDAG } from "./utils/get-empty-nodes";
 export const useStore = <
   N extends Record<string, unknown> = OnePassFlowNodeDataType,
@@ -28,7 +28,12 @@ export const useStore = <
   props: IUseStoreProps<N, E>,
   ref?: ForwardedRef<OnePassFlowRefType<N, E>>,
 ) => {
-  const { onTransformNode, onTransformEdge, initByCardHeight } = props;
+  const {
+    onTransformNode,
+    onTransformEdge,
+    onLayoutingChange,
+    initByCardHeight,
+  } = props;
 
   const [nodes, setNodes, onNodeChange] = useNodesState<Node<N>>([]);
 
@@ -39,6 +44,8 @@ export const useStore = <
   const nodesInitialized = useNodesInitialized({
     includeHiddenNodes: initByCardHeight?.includeHiddenNodes ?? false,
   });
+
+  const [layouting, setLayouting] = useState(false);
 
   const handleUpdate = (nodes: Node<N>[], edges: Edge<E>[]) => {
     setNodes(nodes);
@@ -55,19 +62,37 @@ export const useStore = <
 
     const tranformData = convertLayoutToDAG(clone(data));
 
-    const result = await getTreeNodes<N, E>(
+    // Step 1: 同步构建节点/边，立即渲染（默认位置），避免 ELK 阻塞白屏
+    const preliminary = buildTreeNodes<N, E>(
       tranformData,
       onTransformNode,
       onTransformEdge,
     );
 
-    setNodes(result.nodes);
-    setEdges(result.edges);
+    setNodes(preliminary.nodes);
+    setEdges(preliminary.edges);
+
+    // Step 2: 异步跑 ELK 布局，完成后更新位置
+    setLayouting(true);
+    onLayoutingChange?.(true);
+
+    try {
+      const { nodes: layoutedNodes } = await getLayout<N, E>(
+        preliminary.nodes,
+        preliminary.edges,
+      );
+
+      setNodes(layoutedNodes);
+    } finally {
+      setLayouting(false);
+      onLayoutingChange?.(false);
+    }
   };
 
   useImperativeHandle(ref, () => ({
     nodes,
     edges,
+    layouting,
     handleUpdate,
     handleSetData,
   }));
@@ -86,14 +111,38 @@ export const useStore = <
 
   useEffect(() => {
     if (initByCardHeight && nodesInitialized) {
-      // WHY? Because the nodes are not updated immediately when the handleSetData is called,
-      setTimeout(() => {
-        getLayout(getNodes() as Node<N>[], getEdges() as Edge<E>[]).then(
-          (result) => {
-            updateNodes(result.nodes);
-          },
+      let cancelled = false;
+
+      const tryLayout = () => {
+        if (cancelled) return;
+
+        const currentNodes = getNodes() as Node<N>[];
+
+        // 确保所有非 EmptyNode 节点都已 measured
+        const allMeasured = currentNodes.every(
+          (n) =>
+            n.type === "EmptyNode" || (n.measured?.width && n.measured?.height),
         );
-      }, 100);
+
+        if (!allMeasured) {
+          // measured 还没就绪，等下一帧重试
+          requestAnimationFrame(tryLayout);
+
+          return;
+        }
+
+        getLayout(currentNodes, getEdges() as Edge<E>[]).then((result) => {
+          if (!cancelled) {
+            updateNodes(result.nodes);
+          }
+        });
+      };
+
+      requestAnimationFrame(tryLayout);
+
+      return () => {
+        cancelled = true;
+      };
     }
   }, [getEdges, getNodes, initByCardHeight, nodesInitialized, updateNodes]);
 

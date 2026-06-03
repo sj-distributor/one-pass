@@ -6,7 +6,7 @@ import React from "react";
 
 import type { CardType } from "../../types/card-types";
 import IconFont from "../iconfonts";
-export const Card = React.memo((props: CardType) => {
+const CardInner = (props: CardType) => {
   const {
     data,
     hiddenDescription,
@@ -106,4 +106,6 @@ export const Card = React.memo((props: CardType) => {
       {open && renderForm && renderForm({ data, onClose: setOpen.set })}
     </>
   );
-});
+};
+
+export const Card = React.memo(CardInner) as unknown as typeof CardInner;

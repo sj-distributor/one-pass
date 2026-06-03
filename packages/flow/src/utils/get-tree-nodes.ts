@@ -9,15 +9,14 @@ import {
 import { buildEdge } from "./build-edge";
 import { buildNode } from "./build-node";
 import { getLayout } from "./get-tree-position";
-
-export const getTreeNodes = async <
+export const buildTreeNodes = <
   N extends Record<string, unknown> = OnePassFlowNodeDataType,
   E extends Record<string, unknown> = OnePassFlowEdgeDataType,
 >(
   tree: OnePassFlowNodeDataType[],
   onTransformNode?: OnTransformNodeType<N>,
   onTransformEdge?: OnTransformEdgeType<E>,
-): Promise<{ nodes: Node<N>[]; edges: Edge<E>[] }> => {
+): { nodes: Node<N>[]; edges: Edge<E>[] } => {
   if (!tree.length) return { nodes: [], edges: [] };
   const root = buildNode("1", tree[0], onTransformNode);
 
@@ -96,13 +95,23 @@ export const getTreeNodes = async <
 
   bfsEdge(root);
 
-  const { nodes, edges } = await getLayout<N, E>(
-    resultNode as Node<N>[],
-    resultEdge as Edge<E>[],
-  );
-
   return {
-    nodes,
-    edges,
+    nodes: resultNode as Node<N>[],
+    edges: resultEdge as Edge<E>[],
   };
+};
+
+export const getTreeNodes = async <
+  N extends Record<string, unknown> = OnePassFlowNodeDataType,
+  E extends Record<string, unknown> = OnePassFlowEdgeDataType,
+>(
+  tree: OnePassFlowNodeDataType[],
+  onTransformNode?: OnTransformNodeType<N>,
+  onTransformEdge?: OnTransformEdgeType<E>,
+): Promise<{ nodes: Node<N>[]; edges: Edge<E>[] }> => {
+  const result = buildTreeNodes<N, E>(tree, onTransformNode, onTransformEdge);
+
+  const { nodes, edges } = await getLayout<N, E>(result.nodes, result.edges);
+
+  return { nodes, edges };
 };
