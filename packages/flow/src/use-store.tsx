@@ -8,7 +8,6 @@ import {
   useNodesState,
   useReactFlow,
 } from "@xyflow/react";
-import { clone } from "ramda";
 import { ForwardedRef, useEffect, useImperativeHandle, useState } from "react";
 
 import {
@@ -60,7 +59,7 @@ export const useStore = <
       return;
     }
 
-    const tranformData = convertLayoutToDAG(clone(data));
+    const tranformData = convertLayoutToDAG(data);
 
     // Step 1: 同步构建节点/边，立即渲染（默认位置），避免 ELK 阻塞白屏
     const preliminary = buildTreeNodes<N, E>(

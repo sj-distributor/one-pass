@@ -24,6 +24,13 @@ export const buildTreeNodes = <
 
   const resultEdge: Edge[] = [];
 
+  // Map 索引：O(1) 查找替代 O(n) 的 resultNode.find / resultEdge.find
+  const nodeMap = new Map<string, Node>();
+
+  nodeMap.set(root.data.id, root);
+
+  const edgeMap = new Map<string, Edge>();
+
   // 转换节点
   const bfsNode = (root: Node) => {
     const children = tree.filter((item) =>
@@ -37,7 +44,7 @@ export const buildTreeNodes = <
     const otherNode: Node[] = children
       .filter((item) => item.type !== "EmptyNode")
       .map((item, index) => {
-        const visited = resultNode.find((node) => node.data.id === item.id);
+        const visited = nodeMap.get(item.id);
 
         return visited
           ? null
@@ -53,16 +60,19 @@ export const buildTreeNodes = <
       })
       .filter((item) => !!item);
 
+    for (const node of otherNode) {
+      nodeMap.set(node.data.id, node);
+    }
+
     resultNode.push(...otherNode);
 
     emptyNode.map((item) => {
-      const visited = resultNode.find(
-        (node) => node.type === "EmptyNode" && node.data.id === item.id,
-      );
+      const visited = nodeMap.get(item.id);
 
-      if (!visited) {
+      if (!visited || visited.type !== "EmptyNode") {
         const node = buildNode(`${root.id}-A`, item, onTransformNode);
 
+        nodeMap.set(node.data.id, node);
         resultNode.push(node);
         otherNode.push(node);
       }
@@ -75,18 +85,22 @@ export const buildTreeNodes = <
   const bfsEdge = (root: Node) => {
     const children: Node[] = tree
       .filter((item) => item.parentIds?.includes(root.data.id))
-      ?.map((item) => resultNode.find((node) => node.data.id === item.id))
+      ?.map((item) => nodeMap.get(item.id))
       .filter((item) => !!item);
 
     children.map((item) => {
       const id = `s${root.id}t${item.id}`;
 
-      const visited = resultEdge.find((edge) => edge.id === id);
-
-      !visited &&
-        resultEdge.push(
-          buildEdge(id, { source: root, target: item }, onTransformEdge),
+      if (!edgeMap.has(id)) {
+        const edge = buildEdge(
+          id,
+          { source: root, target: item },
+          onTransformEdge,
         );
+
+        edgeMap.set(id, edge);
+        resultEdge.push(edge);
+      }
       bfsEdge(item);
     });
   };

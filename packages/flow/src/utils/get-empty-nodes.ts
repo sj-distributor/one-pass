@@ -33,12 +33,8 @@ const buildMaps = (nodes: Map<string, OnePassFlowNodeDataType>) => {
   return { children, parents };
 };
 
-const sameParentSet = (left: string[], right: string[]): boolean => {
-  if (left.length !== right.length) return false;
-  const rightSet = new Set(right);
-
-  return left.every((id) => rightSet.has(id));
-};
+const emptyNodeKey = (parentIds: string[]): string =>
+  [...parentIds].sort().join(",");
 
 const createEmptyNodeId = (
   parentIds: string[],
@@ -53,13 +49,14 @@ const createEmptyNodeId = (
   return emptyId;
 };
 
+/**
+ * 从 EmptyNode 索引中查找是否已存在相同 parentIds 的 EmptyNode
+ */
 const findExistingEmptyNode = (
   parentIds: string[],
-  nodes: Map<string, OnePassFlowNodeDataType>,
+  emptyIndex: Map<string, OnePassFlowNodeDataType>,
 ): OnePassFlowNodeDataType | undefined => {
-  return [...nodes.values()].find(
-    (n) => n.type === "EmptyNode" && sameParentSet(n.parentIds, parentIds),
-  );
+  return emptyIndex.get(emptyNodeKey(parentIds));
 };
 
 const compressParentsWithExistingEmptyNodes = (
@@ -214,6 +211,7 @@ const processGroup = (
   group: string[],
   nodes: Map<string, OnePassFlowNodeDataType>,
   children: Map<string, string[]>,
+  emptyIndex: Map<string, OnePassFlowNodeDataType>,
 ): { changed: boolean; emptyNode?: OnePassFlowNodeDataType } => {
   // 1. Compute descendants for each group member
   const descByCi = new Map<string, Set<string>>();
@@ -332,7 +330,7 @@ const processGroup = (
       const branchEndList = [...allBranchEnds].sort();
 
       // Check if an EmptyNode with these exact parents already exists
-      const existingEmpty = findExistingEmptyNode(branchEndList, nodes);
+      const existingEmpty = findExistingEmptyNode(branchEndList, emptyIndex);
 
       if (existingEmpty) {
         lastEmptyNode = existingEmpty;
@@ -375,6 +373,7 @@ const processGroup = (
       // Add to nodes map immediately so it's visible to subsequent
       // clusters and to the caller
       nodes.set(emptyNode.id, emptyNode);
+      emptyIndex.set(emptyNodeKey(emptyNode.parentIds), emptyNode);
 
       // Find all convergences (full list) that share covered cis with
       // this cluster, and redirect them
@@ -467,7 +466,7 @@ const processGroup = (
   }
 
   // Check if an EmptyNode with these exact parents already exists
-  const existingEmpty = findExistingEmptyNode(unique, nodes);
+  const existingEmpty = findExistingEmptyNode(unique, emptyIndex);
 
   if (existingEmpty) return { changed: false };
 
@@ -493,6 +492,9 @@ export const convertLayoutToDAG = (
   for (const n of treeNodes) {
     nodes.set(n.id, { ...n, parentIds: [...n.parentIds] });
   }
+
+  // EmptyNode 索引：key = sorted parentIds，O(1) 查找
+  const emptyIndex = new Map<string, OnePassFlowNodeDataType>();
 
   // Iterate until stable
   let changed = true;
@@ -542,12 +544,16 @@ export const convertLayoutToDAG = (
     groups.sort((a, b) => b.maxDepth - a.maxDepth);
 
     for (const g of groups) {
-      const result = processGroup(g.members, nodes, children);
+      const result = processGroup(g.members, nodes, children, emptyIndex);
 
       if (result.changed) {
         changed = true;
         if (result.emptyNode) {
           nodes.set(result.emptyNode.id, result.emptyNode);
+          emptyIndex.set(
+            emptyNodeKey(result.emptyNode.parentIds),
+            result.emptyNode,
+          );
         }
         // Rebuild children for subsequent groups
         const rebuilt = buildMaps(nodes);
@@ -587,7 +593,10 @@ export const convertLayoutToDAG = (
 
     if (nonEmptyLeaves.length > 0) {
       for (const id of allLeaves) {
-        if (nodes.get(id)!.type === "EmptyNode") {
+        const nodeToPrune = nodes.get(id);
+
+        if (nodeToPrune?.type === "EmptyNode") {
+          emptyIndex.delete(emptyNodeKey(nodeToPrune.parentIds));
           nodes.delete(id);
           pruneChanged = true;
         }
@@ -610,7 +619,7 @@ export const convertLayoutToDAG = (
   let endParentIds = leafIds.sort();
 
   if (endParentIds.length > 1) {
-    const existingEmpty = findExistingEmptyNode(endParentIds, nodes);
+    const existingEmpty = findExistingEmptyNode(endParentIds, emptyIndex);
 
     if (existingEmpty) {
       endParentIds = [existingEmpty.id];
@@ -623,6 +632,7 @@ export const convertLayoutToDAG = (
       };
 
       nodes.set(finalEmptyNode.id, finalEmptyNode);
+      emptyIndex.set(emptyNodeKey(finalEmptyNode.parentIds), finalEmptyNode);
       endParentIds = [finalEmptyNode.id];
     }
   }

@@ -57,6 +57,7 @@ const FlowInner = <
         ["flowRef", "onTransformNode", "onTransformEdge", "initByCardHeight"],
         props,
       )}
+      onlyRenderVisibleElements
       nodeTypes={mergedNodeTypes}
       nodes={nodes}
       edges={edges}
