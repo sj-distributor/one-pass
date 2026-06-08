@@ -417,19 +417,68 @@ const processGroup = (
   for (const ci of group) {
     const exclusive = exclusiveByCi.get(ci)!;
 
-    // Find deepest exclusive node (max distance from ci within exclusive set)
+    // Build subgraph of exclusive nodes and compute longest-path distance
+    // from ci via topological DP. Using DFS with a visited set would
+    // record the wrong deepest node when a node is reachable via multiple
+    // paths of different lengths (the shorter path visits it first and
+    // blocks the longer path).
+    const subInDegree = new Map<string, number>();
+
+    const subChildren = new Map<string, string[]>();
+
+    for (const nodeId of exclusive) {
+      subInDegree.set(nodeId, 0);
+      subChildren.set(nodeId, []);
+    }
+
+    for (const nodeId of exclusive) {
+      for (const child of children.get(nodeId) || []) {
+        if (exclusive.has(child)) {
+          subChildren.get(nodeId)!.push(child);
+          subInDegree.set(child, (subInDegree.get(child) || 0) + 1);
+        }
+      }
+    }
+
+    // Topological sort (Kahn) + longest-path DP
+    const dist = new Map<string, number>();
+
+    const queue: string[] = [];
+
+    for (const [id, deg] of subInDegree) {
+      if (deg === 0) {
+        queue.push(id);
+        dist.set(id, 0);
+      }
+    }
+
+    let head = 0;
+
+    while (head < queue.length) {
+      const cur = queue[head++];
+
+      const curDist = dist.get(cur) || 0;
+
+      for (const child of subChildren.get(cur) || []) {
+        const newDist = curDist + 1;
+
+        if (newDist > (dist.get(child) || 0)) {
+          dist.set(child, newDist);
+        }
+        const newDeg = (subInDegree.get(child) || 1) - 1;
+
+        subInDegree.set(child, newDeg);
+        if (newDeg === 0) queue.push(child);
+      }
+    }
+
+    // Pick the node with maximum distance, excluding foreign EmptyNodes
     let deepest = ci;
 
     let maxDepth = 0;
 
-    const visited = new Set<string>();
-
-    const dfs = (node: string, depth: number) => {
-      if (visited.has(node)) return;
-      visited.add(node);
-      // Consider as deepest candidate unless it's an EmptyNode whose
-      // parents are not all within this branch (foreign EmptyNode leak).
-      const nodeObj = nodes.get(node);
+    for (const [id, d] of dist) {
+      const nodeObj = nodes.get(id);
 
       const isForeignEmpty =
         nodeObj?.type === "EmptyNode" &&
@@ -437,16 +486,12 @@ const processGroup = (
           (pid: string) => pid === ci || exclusive.has(pid),
         );
 
-      if (depth > maxDepth && !isForeignEmpty) {
-        maxDepth = depth;
-        deepest = node;
+      if (d > maxDepth && !isForeignEmpty) {
+        maxDepth = d;
+        deepest = id;
       }
-      for (const child of children.get(node) || []) {
-        if (exclusive.has(child)) dfs(child, depth + 1);
-      }
-    };
+    }
 
-    dfs(ci, 0);
     branchEnds.push(deepest);
   }
 
