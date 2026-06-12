@@ -6,10 +6,10 @@ import {
   OnTransformEdgeType,
 } from "../types/one-pass-flow-types";
 
-const getEdgeType = (data?: OnePassFlowEdgeDataType) => {
-  if ((data?.target?.data.parentIds?.length ?? 1) > 1) return "EndEdge";
+const getEdgeType = (targetType?: string, targetParentIdsLength?: number) => {
+  if ((targetParentIdsLength ?? 1) > 1) return "EndEdge";
 
-  switch (data?.target?.type) {
+  switch (targetType) {
     case "ConditionNode":
       return "ConditionEdge";
     case "EndNode":
@@ -28,6 +28,12 @@ export const buildEdge = <
 ): Edge => {
   const rest = onTransformEdge && onTransformEdge(id, data);
 
+  const sourceType = data.source?.type;
+
+  const targetType = data.target?.type;
+
+  const targetParentIdsLength = data.target?.data?.parentIds?.length ?? 1;
+
   return {
     id,
     source: data.source.id,
@@ -36,10 +42,14 @@ export const buildEdge = <
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
-    type: getEdgeType(data),
+    type: getEdgeType(targetType, targetParentIdsLength),
     data: {
-      ...data,
+      sourceType,
+      targetType,
       status: undefined,
+      // 保留 source/target 保证向后兼容，消费者 renderEdgeLabel / renderForm 可能依赖
+      source: data.source,
+      target: data.target,
     },
     selectable: false,
     deletable: false,

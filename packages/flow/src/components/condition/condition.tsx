@@ -3,7 +3,7 @@ import React from "react";
 import { CardType } from "../../types/card-types";
 import { Card } from "../card/card";
 
-export const Condition = (props: CardType) => (
+const ConditionInner = (props: CardType) => (
   <Card
     {...props}
     className={props.className ?? "one-pass-card-condition"}
@@ -11,3 +11,7 @@ export const Condition = (props: CardType) => (
     allowCopy={props.allowCopy ?? true}
   />
 );
+
+export const Condition = React.memo(
+  ConditionInner,
+) as unknown as typeof ConditionInner;

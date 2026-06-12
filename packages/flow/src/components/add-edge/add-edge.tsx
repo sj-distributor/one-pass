@@ -6,7 +6,7 @@ import React from "react";
 import { IAddEdgeProps } from "../../types/add-edge";
 import IconFont from "../iconfonts";
 import { useStore } from "./use-store";
-export const AddEdge = <
+const AddEdgeInner = <
   T extends Record<string, unknown> = Record<string, unknown>,
 >(
   props: IAddEdgeProps<T>,
@@ -115,3 +115,7 @@ export const AddEdge = <
     </>
   );
 };
+
+export const AddEdge = React.memo(
+  AddEdgeInner,
+) as unknown as typeof AddEdgeInner;

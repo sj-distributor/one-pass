@@ -2,7 +2,7 @@ import "@xyflow/react/dist/style.css";
 
 import { ReactFlow, ReactFlowProvider } from "@xyflow/react";
 import { omit } from "ramda";
-import React, { ForwardedRef, forwardRef } from "react";
+import React, { ForwardedRef, forwardRef, useMemo } from "react";
 
 import { Approver } from "./components/approver/approver";
 import { Condition } from "./components/condition/condition";
@@ -46,13 +46,19 @@ const FlowInner = <
 
   const { nodeTypes } = props;
 
+  const mergedNodeTypes = useMemo(
+    () => ({ ...nodeTypes, ...ONE_PASS_FLOW_NODE_TYPES }),
+    [nodeTypes],
+  );
+
   return (
     <ReactFlow
       {...omit(
         ["flowRef", "onTransformNode", "onTransformEdge", "initByCardHeight"],
         props,
       )}
-      nodeTypes={{ ...nodeTypes, ...ONE_PASS_FLOW_NODE_TYPES }}
+      onlyRenderVisibleElements
+      nodeTypes={mergedNodeTypes}
       nodes={nodes}
       edges={edges}
       onNodesChange={handleOnNodesChange}

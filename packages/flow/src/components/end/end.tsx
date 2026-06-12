@@ -4,7 +4,7 @@ import { Handle, Position } from "@xyflow/react";
 import React from "react";
 
 import { CardType } from "../../types/card-types";
-export const End = (props?: CardType) => {
+const EndInner = (props?: CardType) => {
   return (
     <div className={props?.className ?? "one-pass-flow-end"}>
       <Handle
@@ -17,3 +17,5 @@ export const End = (props?: CardType) => {
     </div>
   );
 };
+
+export const End = React.memo(EndInner) as unknown as typeof EndInner;
