@@ -49,7 +49,11 @@ export const getLayout = async <
           ? 1
           : heightMap.get(node.id.split("-").length) || 88,
     })),
-    edges,
+    edges: edges.map((edge) => ({
+      id: edge.id,
+      sources: [edge.source],
+      targets: [edge.target],
+    })),
   };
 
   const result = await elk.layout(graph as unknown as ElkNode);

@@ -34,6 +34,27 @@ export const buildEdge = <
 
   const targetParentIdsLength = data.target?.data?.parentIds?.length ?? 1;
 
+  const edgeData = {
+    sourceType,
+    targetType,
+    status: undefined,
+    source: data.source,
+    target: data.target,
+  };
+
+  // Keep source/target available for existing render hooks without making ELK
+  // clone the full node objects for every edge during layout.
+  Object.defineProperties(edgeData, {
+    source: {
+      enumerable: false,
+      value: data.source,
+    },
+    target: {
+      enumerable: false,
+      value: data.target,
+    },
+  });
+
   return {
     id,
     source: data.source.id,
@@ -43,14 +64,7 @@ export const buildEdge = <
       type: MarkerType.ArrowClosed,
     },
     type: getEdgeType(targetType, targetParentIdsLength),
-    data: {
-      sourceType,
-      targetType,
-      status: undefined,
-      // 保留 source/target 保证向后兼容，消费者 renderEdgeLabel / renderForm 可能依赖
-      source: data.source,
-      target: data.target,
-    },
+    data: edgeData,
     selectable: false,
     deletable: false,
     ...rest,
