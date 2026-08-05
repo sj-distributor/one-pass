@@ -40,9 +40,7 @@ export const getLayout = async <
       "elk.spacing.nodeNode": "32",
     },
     children: nodes.map((node) => ({
-      ...node,
-      targetPosition: "top",
-      sourcePosition: "bottom",
+      id: node.id,
       width: node.type === "EmptyNode" ? 1 : (node?.measured?.width ?? 200),
       height:
         node.type === "EmptyNode"
@@ -58,8 +56,12 @@ export const getLayout = async <
 
   const result = await elk.layout(graph as unknown as ElkNode);
 
+  const positionById = new Map(
+    result?.children?.map((item) => [item.id, item]) ?? [],
+  );
+
   const layout = nodes.map((node) => {
-    const position = result?.children?.find((item) => item.id === node.id);
+    const position = positionById.get(node.id);
 
     return {
       ...node,
