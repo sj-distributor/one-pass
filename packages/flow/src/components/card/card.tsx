@@ -20,6 +20,8 @@ const CardInner = (props: CardType) => {
 
   const [open, setOpen] = useBoolean(false);
 
+  const [hover, setHover] = useBoolean(false);
+
   const { name, description, type } = data;
 
   const getCardStatusClassName = (status?: "error" | "warning" | "success") => {
@@ -59,25 +61,31 @@ const CardInner = (props: CardType) => {
       <div
         className={`one-pass-card-default ${className ?? ""} ${getCardStatusClassName(data.status)}`}
       >
-        <div className="one-pass-card-title">
-          {name}
-          <div className="one-pass-card-button nodrag">
-            {/* TODO: 确认方法是不是要从data入 */}
-            {allowCopy && (
-              <IconFont
-                name="a-_duplicate_5"
-                onClick={() => onCopy && onCopy(props)}
-              />
-            )}
-            {allowDelete && (
-              <IconFont
-                className="cursor-pointer ml-4"
-                name="close"
-                color={"#fff"}
-                onClick={() => onDelete && onDelete(props)}
-              />
-            )}
-          </div>
+        <div
+          className="one-pass-card-title"
+          onMouseEnter={() => setHover.setTrue()}
+          onMouseLeave={() => setHover.setFalse()}
+        >
+          <span>{name}</span>
+          {hover && (
+            <div className="one-pass-card-button nodrag">
+              {/* TODO: 确认方法是不是要从data入 */}
+              {allowCopy && (
+                <IconFont
+                  name="a-_duplicate_5"
+                  onClick={() => onCopy && onCopy(props)}
+                />
+              )}
+              {allowDelete && (
+                <IconFont
+                  className="cursor-pointer ml-4"
+                  name="close"
+                  color={"#fff"}
+                  onClick={() => onDelete && onDelete(props)}
+                />
+              )}
+            </div>
+          )}
         </div>
         <div
           className={`one-pass-card-content ${hiddenDescription ? "one-pass-card-empty-content" : ""}`}

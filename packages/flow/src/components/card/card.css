@@ -29,10 +29,17 @@
   /* unknow why should be 7px  */
   border-radius: 7px 7px 0 0;
   background-color: #342a5e;
+
+  span {
+    width: calc(100% - 40px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .one-pass-card-button {
-  display: none;
+  display: flex;
   pointer-events: all;
 }
 

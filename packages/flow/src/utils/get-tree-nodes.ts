@@ -20,6 +20,20 @@ export const buildTreeNodes = <
   if (!tree.length) return { nodes: [], edges: [] };
   const root = buildNode("1", tree[0], onTransformNode);
 
+  const childrenByParentId = new Map<string, OnePassFlowNodeDataType[]>();
+
+  for (const item of tree) {
+    for (const parentId of item.parentIds ?? []) {
+      const children = childrenByParentId.get(parentId);
+
+      if (children) {
+        children.push(item);
+      } else {
+        childrenByParentId.set(parentId, [item]);
+      }
+    }
+  }
+
   const resultNode: Node[] = [root];
 
   const resultEdge: Edge[] = [];
@@ -31,11 +45,18 @@ export const buildTreeNodes = <
 
   const edgeMap = new Map<string, Edge>();
 
+  // DAG 中多个父节点可能汇合到同一个节点；记录已展开的业务节点，
+  // 避免从汇合点开始重复递归整段下游。
+  const expandedNodeIds = new Set<string>();
+
+  const expandedEdgeIds = new Set<string>();
+
   // 转换节点
   const bfsNode = (root: Node) => {
-    const children = tree.filter((item) =>
-      item.parentIds?.includes(root.data.id),
-    );
+    if (expandedNodeIds.has(root.data.id)) return;
+    expandedNodeIds.add(root.data.id);
+
+    const children = childrenByParentId.get(root.data.id) ?? [];
 
     const emptyNode: OnePassFlowNodeDataType[] = children.filter(
       (item) => item.type === "EmptyNode",
@@ -83,9 +104,11 @@ export const buildTreeNodes = <
 
   // 转换边
   const bfsEdge = (root: Node) => {
-    const children: Node[] = tree
-      .filter((item) => item.parentIds?.includes(root.data.id))
-      ?.map((item) => nodeMap.get(item.id))
+    if (expandedEdgeIds.has(root.data.id)) return;
+    expandedEdgeIds.add(root.data.id);
+
+    const children: Node[] = (childrenByParentId.get(root.data.id) ?? [])
+      .map((item) => nodeMap.get(item.id))
       .filter((item) => !!item);
 
     children.map((item) => {

@@ -1,11 +1,34 @@
 import "./add-edge.css";
 
 import { BaseEdge as XyflowBaseEdge, EdgeLabelRenderer } from "@xyflow/react";
-import React from "react";
+import React, { useState } from "react";
 
 import { IAddEdgeProps } from "../../types/add-edge";
-import IconFont from "../iconfonts";
+import IconFont, { IconNames } from "../iconfonts";
 import { useStore } from "./use-store";
+
+const ADD_EDGE_OPTIONS: Array<{
+  type: string;
+  title: string;
+  iconName: IconNames;
+}> = [
+  {
+    type: "ConditionNode",
+    title: "條件",
+    iconName: "a-ome_IconDepartmentIcon",
+  },
+  {
+    type: "ApproverNode",
+    title: "審批人",
+    iconName: "PersonLineIcon_",
+  },
+  {
+    type: "CcRecipientNode",
+    title: "抄送人",
+    iconName: "SendIcon_",
+  },
+];
+
 const AddEdgeInner = <
   T extends Record<string, unknown> = Record<string, unknown>,
 >(
@@ -26,24 +49,7 @@ const AddEdgeInner = <
     handleOpenChange,
   } = useStore(props);
 
-  // TODO: 后续兼容不同的Type
-  const options = [
-    {
-      type: "ConditionNode",
-      title: "條件",
-      icon: <IconFont size={24} name="a-ome_IconDepartmentIcon" />,
-    },
-    {
-      type: "ApproverNode",
-      title: "審批人",
-      icon: <IconFont size={24} name="PersonLineIcon_" />,
-    },
-    {
-      type: "CcRecipientNode",
-      title: "抄送人",
-      icon: <IconFont size={24} name="SendIcon_" />,
-    },
-  ];
+  const [popoverOpen, setPopoverOpen] = useState(false);
 
   const renderAddButton = (
     translateX: number,
@@ -55,14 +61,17 @@ const AddEdgeInner = <
       style={{
         transform: `translate(-50%, -50%) translate(${translateX}px,${translateY}px)`,
       }}
+      onMouseEnter={() => setPopoverOpen(true)}
+      onMouseLeave={() => setPopoverOpen(false)}
     >
       <IconFont name="add" color={"#605DEC"} />
       <div className="one-pass-add-edge-button-inner">
-        <div className="one-pass-add-edge-button-popover">
-          <div className="one-pass-add-edge-button-popover-content">
-            {options
-              .filter((item) => !filter?.includes(item.type))
-              .map((item) => (
+        {popoverOpen && (
+          <div className="one-pass-add-edge-button-popover">
+            <div className="one-pass-add-edge-button-popover-content">
+              {ADD_EDGE_OPTIONS.filter(
+                (item) => !filter?.includes(item.type),
+              ).map((item) => (
                 <div
                   key={item.type}
                   className="one-pass-add-edge-button-popover-item"
@@ -71,12 +80,13 @@ const AddEdgeInner = <
                     setType(item.type);
                   }}
                 >
-                  {item.icon}
+                  <IconFont size={24} name={item.iconName} />
                   <span>{item.title}</span>
                 </div>
               ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

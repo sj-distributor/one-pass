@@ -34,6 +34,10 @@ export const useStore = <
     initByCardHeight,
   } = props;
 
+  const shouldLayoutByCardHeight = !!initByCardHeight;
+
+  const includeHiddenNodes = initByCardHeight?.includeHiddenNodes ?? false;
+
   const [nodes, setNodes, onNodeChange] = useNodesState<Node<N>>([]);
 
   const [edges, setEdges, onEdgeChange] = useEdgesState<Edge<E>>([]);
@@ -41,7 +45,7 @@ export const useStore = <
   const { getNodes, getEdges, setNodes: updateNodes } = useReactFlow();
 
   const nodesInitialized = useNodesInitialized({
-    includeHiddenNodes: initByCardHeight?.includeHiddenNodes ?? false,
+    includeHiddenNodes,
   });
 
   const [layouting, setLayouting] = useState(false);
@@ -70,6 +74,10 @@ export const useStore = <
 
     setNodes(preliminary.nodes);
     setEdges(preliminary.edges);
+
+    if (initByCardHeight) {
+      return;
+    }
 
     // Step 2: 异步跑 ELK 布局，完成后更新位置
     setLayouting(true);
@@ -109,7 +117,7 @@ export const useStore = <
   };
 
   useEffect(() => {
-    if (initByCardHeight && nodesInitialized) {
+    if (shouldLayoutByCardHeight && nodesInitialized) {
       let cancelled = false;
 
       const tryLayout = () => {
@@ -130,9 +138,14 @@ export const useStore = <
           return;
         }
 
+        setLayouting(true);
+        onLayoutingChange?.(true);
+
         getLayout(currentNodes, getEdges() as Edge<E>[]).then((result) => {
           if (!cancelled) {
             updateNodes(result.nodes);
+            setLayouting(false);
+            onLayoutingChange?.(false);
           }
         });
       };
@@ -143,7 +156,14 @@ export const useStore = <
         cancelled = true;
       };
     }
-  }, [getEdges, getNodes, initByCardHeight, nodesInitialized, updateNodes]);
+  }, [
+    getEdges,
+    getNodes,
+    nodesInitialized,
+    onLayoutingChange,
+    shouldLayoutByCardHeight,
+    updateNodes,
+  ]);
 
   return {
     nodes,
